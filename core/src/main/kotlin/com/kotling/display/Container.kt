@@ -1,15 +1,11 @@
 package com.kotling.display
 
+import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector2
+import com.kotling.poolable.use
+import com.kotling.rendering.Painter
+
 abstract class Container : Display() {
-    val children:DisplayList = DisplayList(mutableListOf())
-
-    var touchGroup = false
-
-    override fun dispose() {
-        children.forEach { it.dispose() }
-        super.dispose()
-    }
-
     inner class DisplayList(val l : MutableList<Display>) : MutableList<Display> by l {
         override fun add(element:Display):Boolean {
             add(size, element)
@@ -73,13 +69,11 @@ abstract class Container : Display() {
         override fun remove(element:Display):Boolean = remove(element, false)
         fun remove(element:Display, dispose:Boolean):Boolean {
             var index = indexOfFirst { it == element }
-            if(index > 0) {
-                removeAt(index, dispose)
-                return true
-            }
-            else {
+            if(index < 0)
                 return false
-            }
+
+            removeAt(index, dispose)
+            return true
         }
 
         override fun removeAt(index:Int):Display = removeAt(index, false)
@@ -222,5 +216,77 @@ abstract class Container : Display() {
                 */
             }
         }
+    }
+
+    val children:DisplayList = DisplayList(mutableListOf())
+
+    var touchGroup = false
+
+    override fun dispose() {
+        children.forEach { it.dispose() }
+        super.dispose()
+    }
+
+    override fun getBounds(targetSpace:Display?, result:Rectangle?):Rectangle {
+        val out = result ?: Rectangle()
+
+        when(children.size) {
+            0 -> {
+                Pool.Matrix3.use { m ->
+                Pool.Vector2.use { p ->
+                    getTransformationMatrix(targetSpace, m)
+                    return out.setPosition(p.set(0f, 0f).mul(m)).setSize(0f, 0f)
+                }}
+            }
+            1 -> {
+                return children[0].getBounds(targetSpace, out)
+            }
+            else -> {
+                Pool.Rectangle.use { r ->
+                    var first = true
+                    children.forEach {
+                        if(first) {
+                            it.getBounds(targetSpace, out)
+                            first = false
+                        }
+                        else {
+                            it.getBounds(targetSpace, r)
+                            out.merge(r)
+                        }
+                    }
+
+                    return out
+                }
+            }
+        }
+    }
+
+    override fun hitTest(localPoint:Vector2):Display? {
+        if (! visible || ! touchable /*|| ! hitTestMask(localPoint)*/) return null
+
+        if(children.isEmpty())
+            return null
+
+        var target:Display? = null
+
+        Pool.Matrix3.use { m ->
+        Pool.Vector2.use { p ->
+            for(i in children.lastIndex downTo 0) {
+                val child = children[i]
+
+                // if(child.isMask) continue
+
+                target = child.hitTest(p.set(localPoint).mul(m.mul(child.transformationMatrix).inv()))
+
+                if(target != null)
+                    break
+            }
+
+            return if(touchGroup) this else target
+        }}
+    }
+
+    override fun render(painter:Painter) {
+        // TODO:
     }
 }

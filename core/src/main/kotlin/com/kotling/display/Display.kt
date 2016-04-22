@@ -63,10 +63,10 @@ abstract class Display : Disposable {
             field = value
         }
 
-    val base:Display            = parent?.base ?: this
-    val stage:Stage?            = base as? Stage
+    val base:Display get() = parent?.base ?: this
+    val stage:Stage? get() = base as? Stage
 
-    var name                    = ""
+    var name = ""
 
     var x = 0f
         set(value) {
@@ -129,6 +129,14 @@ abstract class Display : Disposable {
             orientationChanged = true
             field = value
         }
+
+    var pivotAlignmentX:Float
+        get() = (pivotX - internalBounds.x) / internalBounds.width
+        set(value) { pivotX = internalBounds.x + internalBounds.width * value }
+
+    var pivotAlignmentY:Float
+        get() = (pivotY - internalBounds.y) / internalBounds.height
+        set(value) { pivotY = internalBounds.y + internalBounds.height * value }
 
     var scaleX = 1f
         set(value) {
@@ -277,9 +285,7 @@ abstract class Display : Disposable {
 
         //TODO: if(mask != null && ! hitTestMask(localPoint)) return null
 
-        Pool.Rectangle.use {
-            return if(getBounds(this, it).contains(localPoint)) this else null
-        }
+        return if(internalBounds.contains(localPoint)) this else null
     }
 
     fun getTransformationMatrix(targetSpace:Display?, result:Matrix3? = null):Matrix3 {
@@ -347,15 +353,6 @@ abstract class Display : Disposable {
 
         Pool.Matrix3.use {
             return out.set(globalPoint).mul(getTransformationMatrix(base, it).inv())
-        }
-    }
-
-    fun alignPivot(horizontalRatio:Float = 0.5f, verticalRatio:Float = 0.5f) {
-        Pool.Rectangle.use {
-            val bounds = getBounds(this, it)
-
-            pivotX = bounds.x + bounds.width * horizontalRatio
-            pivotY = bounds.y + bounds.height * verticalRatio
         }
     }
 
