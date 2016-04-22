@@ -119,7 +119,7 @@ abstract class Container : Display() {
         fun retainAll(elements:Collection<Display>, dispose:Boolean):Boolean {
             var result = false
 
-            for(i in lastIndex downTo 0) {
+            for(i in indices.reversed()) {
                 if(elements.contains(this[i]))
                     continue
 
@@ -135,6 +135,10 @@ abstract class Container : Display() {
         override fun listIterator(index:Int):MutableListIterator<Display> = DisplayListIterator(l.listIterator(index))
 
         override fun subList(fromIndex:Int, toIndex:Int):MutableList<Display> = throw UnsupportedOperationException()
+
+        override fun equals(other:Any?):Boolean = l.equals(other)
+        override fun hashCode():Int = l.hashCode()
+        override fun toString():String = l.toString()
 
         inner class DisplayListIterator(val iterator : MutableListIterator<Display>) : MutableListIterator<Display> by iterator {
             lateinit var lastElement:Display
