@@ -1,9 +1,6 @@
 package com.kotling.display
 
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Rectangle
-import com.kotling.poolable.use
-import com.kotling.rendering.Painter
 import junit.framework.TestCase
 
 class DisplayTest : TestCase() {
@@ -101,8 +98,11 @@ class DisplayTest : TestCase() {
         assertEquals(230.43f, display.bounds.height)
         assertEquals(15f / TestDisplay.WIDTH, display.scaleX)
         assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY)
+        assertEquals(0f, display.pivotAlignmentX)
+        assertEquals(0f, display.pivotAlignmentY)
 
-        display.alignPivot()
+        display.pivotAlignmentX = 0.5f
+        display.pivotAlignmentY = 0.5f
 
         assertEquals(1.5f - 15f / 2f, display.bounds.x)
         assertEquals(2.333f - 230.43f / 2f, display.bounds.y)
@@ -110,6 +110,8 @@ class DisplayTest : TestCase() {
         assertEquals(230.43f, display.bounds.height)
         assertEquals(15f / TestDisplay.WIDTH, display.scaleX)
         assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY)
+        assertEquals(0.5f, display.pivotAlignmentX)
+        assertEquals(0.5f, display.pivotAlignmentY)
 
         display.rotation = MathUtils.PI2
 
@@ -137,39 +139,14 @@ class DisplayTest : TestCase() {
         assertEquals(15f, display.bounds.height, FLOAT_PRECISION)
         assertEquals(15f / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
         assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
-    }
-}
 
-class TestDisplay(val initialWidth:Float = WIDTH, val initialHeight:Float = HEIGHT) : Display() {
-    companion object {
-        val WIDTH   = 10f
-        val HEIGHT  = 7f
-    }
+        display.rotation -= MathUtils.PI
 
-    override fun getBounds(targetSpace:Display?, result:Rectangle?):Rectangle {
-        Pool.Matrix3.use {
-            getTransformationMatrix(targetSpace, it)
-
-            val p1 = Pool.Vector2.obtain()
-            val p2 = Pool.Vector2.obtain()
-
-            p1.set(0f, 0f).mul(it)
-            p2.set(initialWidth, initialHeight).mul(it)
-
-            val out     = result ?: Rectangle()
-            out.x       = Math.min(p1.x, p2.x)
-            out.y       = Math.min(p1.y, p2.y)
-            out.width   = Math.max(p1.x, p2.x) - out.x
-            out.height  = Math.max(p1.y, p2.y) - out.y
-
-            Pool.Vector2.free(p1)
-            Pool.Vector2.free(p2)
-
-            return out;
-        }
-    }
-
-    override fun render(painter:Painter) {
-        // do nothing
+        assertEquals(1.5f - 230.43f / 2f, display.bounds.x, FLOAT_PRECISION)
+        assertEquals(2.333f - 15f / 2f, display.bounds.y, FLOAT_PRECISION)
+        assertEquals(230.43f, display.bounds.width, FLOAT_PRECISION)
+        assertEquals(15f, display.bounds.height, FLOAT_PRECISION)
+        assertEquals(15f / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
+        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
     }
 }
