@@ -36,7 +36,14 @@ class TestDisplay(val initialWidth:Float = WIDTH, val initialHeight:Float = HEIG
     override fun render(painter:Painter) {
         // do nothing
     }
+
+    override fun toString():String {
+        return name
+    }
 }
 
 class TestContainer : Container() {
+    override fun toString():String {
+        return children.toString()
+    }
 }
