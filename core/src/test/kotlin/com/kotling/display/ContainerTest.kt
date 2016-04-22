@@ -255,7 +255,7 @@ class ContainerTest : TestCase() {
         }
     }
 
-    fun testSet() {
+    fun testGetSet() {
         val odd     = displays.filterIndexed { i, display -> i % 2 != 0 }
         val even    = displays.filterIndexed { i, display -> i % 2 == 0 }
 
@@ -264,11 +264,13 @@ class ContainerTest : TestCase() {
         assertEquals(odd.size, container.children.size)
 
         for(i in 0..Math.min(odd.lastIndex, even.lastIndex)) {
+            assertEquals(odd[i], container.children[i])
             container.children[i] = even[i]
 
             assertEquals(odd.size, container.children.size)
             assertFalse(container.children.contains(odd[i]))
             assertTrue(container.children.contains(even[i]))
+            assertEquals(even[i], container.children[i])
             assertEquals(null, odd[i].parent)
             assertEquals(odd[i], odd[i].base)
             assertEquals(null, odd[i].stage)
@@ -284,11 +286,13 @@ class ContainerTest : TestCase() {
         assertEquals(even.size, container.children.size)
 
         for(i in 0..Math.min(odd.lastIndex, even.lastIndex)) {
+            assertEquals(even[i], container.children[i])
             container.children[i] = odd[i]
 
             assertEquals(even.size, container.children.size)
             assertFalse(container.children.contains(even[i]))
             assertTrue(container.children.contains(odd[i]))
+            assertEquals(odd[i], container.children[i])
             assertEquals(null, even[i].parent)
             assertEquals(even[i], even[i].base)
             assertEquals(null, even[i].stage)
@@ -296,5 +300,141 @@ class ContainerTest : TestCase() {
             assertEquals(container, odd[i].base)
             assertEquals(null, odd[i].stage)
         }
+    }
+
+    fun testIteratorNext() {
+        container.children.addAll(displays)
+        assertEquals(displays.size, container.children.size)
+
+        with(container.children.listIterator()) {
+            for (i in displays.indices) {
+                assertTrue(hasNext())
+                assertEquals(displays[i], next())
+            }
+
+            assertFalse(hasNext())
+        }
+    }
+
+    fun testIteratorPrev() {
+        container.children.addAll(displays)
+        assertEquals(displays.size, container.children.size)
+
+        with(container.children.listIterator(container.children.size)) {
+            for (i in displays.indices.reversed()) {
+                assertTrue(hasPrevious())
+                assertEquals(displays[i], previous())
+            }
+
+            assertFalse(hasPrevious())
+        }
+    }
+
+    fun testIteratorRemove() {
+        container.children.addAll(displays)
+        assertEquals(displays.size, container.children.size)
+
+        with(container.children.listIterator()) {
+            for (i in displays.indices) {
+                assertTrue(container.children.contains(displays[i]))
+                assertEquals(container, displays[i].parent)
+                next()
+                remove()
+                assertFalse(container.children.contains(displays[i]))
+                assertEquals(null, displays[i].parent)
+            }
+
+            assertFalse(hasNext())
+        }
+
+        container.children.addAll(displays)
+        assertEquals(displays.size, container.children.size)
+
+        with(container.children.listIterator(container.children.size)) {
+            for (i in displays.indices.reversed()) {
+                assertTrue(container.children.contains(displays[i]))
+                assertEquals(container, displays[i].parent)
+                previous()
+                remove()
+                assertFalse(container.children.contains(displays[i]))
+                assertEquals(null, displays[i].parent)
+            }
+
+            assertFalse(hasPrevious())
+        }
+    }
+
+    fun testIteratorAdd() {
+        val odd     = displays.filterIndexed { i, display -> i % 2 != 0 }
+        val even    = displays.filterIndexed { i, display -> i % 2 == 0 }
+
+        assertEquals(0, container.children.size)
+        container.children.addAll(odd)
+        assertEquals(odd.size, container.children.size)
+
+        with(container.children.listIterator()) {
+            for (i in 0..Math.min(odd.lastIndex, even.lastIndex)) {
+                assertTrue(container.children.contains(odd[i]))
+                assertFalse(container.children.contains(even[i]))
+                assertEquals(container, odd[i].parent)
+                assertEquals(null, even[i].parent)
+                add(even[i])
+                assertEquals(container, odd[i].parent)
+                assertEquals(container, even[i].parent)
+                assertTrue(container.children.contains(odd[i]))
+                assertTrue(container.children.contains(even[i]))
+                next()
+            }
+        }
+    }
+
+    fun testIteratorSet() {
+        val odd     = displays.filterIndexed { i, display -> i % 2 != 0 }
+        val even    = displays.filterIndexed { i, display -> i % 2 == 0 }
+
+        assertEquals(0, container.children.size)
+        container.children.addAll(odd)
+        assertEquals(odd.size, container.children.size)
+
+        with(container.children.listIterator()) {
+            for (i in 0..Math.min(odd.lastIndex, even.lastIndex)) {
+                assertTrue(container.children.contains(odd[i]))
+                assertFalse(container.children.contains(even[i]))
+                assertEquals(container, odd[i].parent)
+                assertEquals(null, even[i].parent)
+                next()
+                set(even[i])
+                assertFalse(container.children.contains(odd[i]))
+                assertTrue(container.children.contains(even[i]))
+                assertEquals(null, odd[i].parent)
+                assertEquals(container, even[i].parent)
+            }
+        }
+
+        assertEquals(odd.size, container.children.size)
+        container.children.addAll(even)
+        assertEquals(even.size, container.children.size)
+
+        with(container.children.listIterator(container.children.size)) {
+            for (i in Math.min(odd.lastIndex, even.lastIndex) downTo 0) {
+                assertTrue(container.children.contains(even[i]))
+                assertFalse(container.children.contains(odd[i]))
+                assertEquals(container, even[i].parent)
+                assertEquals(null, odd[i].parent)
+                previous()
+                set(odd[i])
+                assertFalse(container.children.contains(even[i]))
+                assertTrue(container.children.contains(odd[i]))
+                assertEquals(null, even[i].parent)
+                assertEquals(container, odd[i].parent)
+            }
+        }
+    }
+
+    fun testEmpty() {
+        assertEquals(0f, container.x)
+        assertEquals(0f, container.y)
+        assertEquals(0f, container.width)
+        assertEquals(0f, container.height)
     }
 }
