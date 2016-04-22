@@ -1,8 +1,9 @@
 package com.kotling.display
 
+import com.badlogic.gdx.math.Rectangle
 import junit.framework.TestCase
 
-class ContainerTest : TestCase() {
+class ContainerChildrenTest: TestCase() {
     lateinit var container:Container
     lateinit var displays:Array<Display>
     val names = arrayOf("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n")
@@ -429,12 +430,5 @@ class ContainerTest : TestCase() {
                 assertEquals(container, odd[i].parent)
             }
         }
-    }
-
-    fun testEmpty() {
-        assertEquals(0f, container.x)
-        assertEquals(0f, container.y)
-        assertEquals(0f, container.width)
-        assertEquals(0f, container.height)
     }
 }
