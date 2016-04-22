@@ -1,11 +1,16 @@
 package com.kotling.display
 
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.kotling.poolable.use
 import com.kotling.rendering.Painter
 import junit.framework.TestCase
 
 class DisplayTest : TestCase() {
+    companion object {
+        val FLOAT_PRECISION = MathUtils.FLOAT_ROUNDING_ERROR * 100f
+    }
+
     lateinit var display:Display
 
     override fun setUp() {
@@ -105,6 +110,33 @@ class DisplayTest : TestCase() {
         assertEquals(230.43f, display.bounds.height)
         assertEquals(15f / TestDisplay.WIDTH, display.scaleX)
         assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY)
+
+        display.rotation = MathUtils.PI2
+
+        assertEquals(1.5f - 15f / 2f, display.bounds.x)
+        assertEquals(2.333f - 230.43f / 2f, display.bounds.y)
+        assertEquals(15f, display.bounds.width)
+        assertEquals(230.43f, display.bounds.height)
+        assertEquals(15f / TestDisplay.WIDTH, display.scaleX)
+        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY)
+
+        display.rotation = MathUtils.PI
+
+        assertEquals(1.5f - 15f / 2f, display.bounds.x, FLOAT_PRECISION)
+        assertEquals(2.333f - 230.43f / 2f, display.bounds.y, FLOAT_PRECISION)
+        assertEquals(15f, display.bounds.width, FLOAT_PRECISION)
+        assertEquals(230.43f, display.bounds.height, FLOAT_PRECISION)
+        assertEquals(15f / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
+        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
+
+        display.rotation = MathUtils.PI / 2
+
+        assertEquals(1.5f - 230.43f / 2f, display.bounds.x, FLOAT_PRECISION)
+        assertEquals(2.333f - 15f / 2f, display.bounds.y, FLOAT_PRECISION)
+        assertEquals(230.43f, display.bounds.width, FLOAT_PRECISION)
+        assertEquals(15f, display.bounds.height, FLOAT_PRECISION)
+        assertEquals(15f / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
+        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
     }
 }
 
