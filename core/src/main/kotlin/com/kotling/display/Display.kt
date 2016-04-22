@@ -163,14 +163,10 @@ abstract class Display : Disposable {
         }
 
     val bounds = Rectangle()
-        get() =
-            if(orientationChanged) {
-                transformationMatrix // call to update orientation
-                getBounds(parent, field)
-            }
-            else {
-                field
-            }
+        get() = if(orientationChanged) getBounds(parent, field) else field
+
+    val internalBounds = Rectangle()
+        get() = if(orientationChanged) getBounds(this, field) else field
 
     var alpha = 1f
         set(value) {
@@ -183,7 +179,7 @@ abstract class Display : Disposable {
         set(value) {
             val normalized = if(value > 0) value % MathUtils.PI2 else if(value < 0) ((value % MathUtils.PI2) + MathUtils.PI2) % MathUtils.PI2 else 0f
 
-            if(value == normalized) return
+            if(field == normalized) return
             orientationChanged = true
             field = normalized
         }
