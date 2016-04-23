@@ -185,7 +185,7 @@ abstract class Display : Disposable {
 
     var rotation = 0f
         set(value) {
-            val normalized = if(value > 0) value % MathUtils.PI2 else if(value < 0) ((value % MathUtils.PI2) + MathUtils.PI2) % MathUtils.PI2 else 0f
+            val normalized = if(value > 0) value % MathUtils.PI2 else if(value < 0) (value % MathUtils.PI2) + MathUtils.PI2 else 0f
 
             if(field == normalized) return
             orientationChanged = true
