@@ -213,34 +213,36 @@ abstract class Display : Disposable {
             if(! orientationChanged)
                 return field
 
-            if(skewX == 0f && skewY == 0f) {
-                if(rotation == 0f) {
-                    return field.setTo(scaleX, 0f, 0f, scaleY, x - pivotX * scaleX, y - pivotY * scaleY)
+                if(skewX == 0f && skewY == 0f) {
+                    if(rotation == 0f) {
+                        return field.setTo(scaleX, 0f, 0f, scaleY, x - pivotX * scaleX, y - pivotY * scaleY)
+                    }
+                    else {
+                        val cos = MathUtils.cos(rotation)
+                        val sin = MathUtils.sin(rotation)
+                        val a   = scaleX * cos
+                        val b   = scaleX * sin
+                        val c   = scaleY * -sin
+                        val d   = scaleY * cos
+                        val tx  = x - pivotX * a - pivotY * c
+                        val ty  = y - pivotX * b - pivotY * d
+
+                        return field.setTo(a, b, c, d, tx, ty)
+                    }
                 }
                 else {
-                    val cos = MathUtils.cos(rotation);
-                    val sin = MathUtils.sin(rotation);
-                    val a   = scaleX * cos;
-                    val b   = scaleX * sin;
-                    val c   = scaleY * -sin;
-                    val d   = scaleY * cos;
-                    val tx  = x - pivotX * a - pivotY * c;
-                    val ty  = y - pivotX * b - pivotY * d;
+                    throw UnsupportedOperationException("handling skewX and skewY has bugs")
 
-                    return field.setTo(a, b, c, d, tx, ty)
+                    field.idt().scale(scaleX, scaleY).skew(skewX, skewY).rotateRad(rotation).translate(x, y);
+
+                    if (pivotX != 0f || pivotY != 0f) {
+                        // prepend pivot transformation
+                        field.tx = x - field.a * pivotX - field.c * pivotY;
+                        field.ty = y - field.b * pivotX - field.d * pivotY;
+                    }
+
+                    return field
                 }
-            }
-            else {
-                field.idt().scale(scaleX, scaleY).skew(skewX, skewY).rotateRad(rotation).translate(x, y);
-
-                if (pivotX != 0f || pivotY != 0f) {
-                    // prepend pivot transformation
-                    field.tx = x - field.a * pivotX - field.c * pivotY;
-                    field.ty = y - field.b * pivotX - field.d * pivotY;
-                }
-
-                return field
-            }
         }
         set(value) {
             requiresRedraw = true
@@ -298,27 +300,24 @@ abstract class Display : Disposable {
             return out.set(transformationMatrix)
         }
         else if(targetSpace == null || targetSpace == base) {
-            var current:Display? = this
+            var current:Display = this
 
             while(current != targetSpace) {
-                out.mul(current?.transformationMatrix)
-                current = current?.parent
+                out.mulLeft(current.transformationMatrix)
+                current = current.parent ?: break
             }
 
             return out
         }
         else if(targetSpace.parent == this) {
-            targetSpace.getTransformationMatrix(this, out)
-            out.inv()
-
-            return out
+            return targetSpace.getTransformationMatrix(this, out).inv()
         }
 
         var commonParent = findCommonParent(this, targetSpace)
 
         var current = this
         while(current != commonParent) {
-            out.mul(current.transformationMatrix)
+            out.mulLeft(current.transformationMatrix)
             current = current.parent ?: throw IllegalStateException("common parent found, but somehow iterated past it - impossible")
         }
 
@@ -328,7 +327,7 @@ abstract class Display : Disposable {
         Pool.Matrix3.use {
             current = targetSpace
             while(current != commonParent) {
-                it.mul(current.transformationMatrix)
+                it.mulLeft(current.transformationMatrix)
                 current = current.parent ?: throw IllegalStateException("common parent found, but somehow iterated past it - impossible")
             }
 
