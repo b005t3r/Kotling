@@ -234,35 +234,37 @@ abstract class Container : Display() {
     override fun getBounds(targetSpace:Display?, result:Rectangle?):Rectangle {
         val out = result ?: Rectangle()
 
-        when(children.size) {
-            0 -> {
-                Pool.Matrix3.use { m ->
-                Pool.Vector2.use { p ->
-                    getTransformationMatrix(targetSpace, m)
-                    return out.setPosition(p.set(0f, 0f).mul(m)).setSize(0f, 0f)
-                }}
-            }
-            1 -> {
-                return children[0].getBounds(targetSpace, out)
-            }
-            else -> {
-                Pool.Rectangle.use { r ->
-                    var first = true
-                    children.forEach {
-                        if(first) {
-                            it.getBounds(targetSpace, out)
-                            first = false
-                        }
-                        else {
-                            it.getBounds(targetSpace, r)
-                            out.merge(r)
-                        }
-                    }
+        Pool.Matrix3.use { m ->
+        Pool.Vector2.use { p ->
+            getTransformationMatrix(targetSpace, m)
+            p.set(0f, 0f).mul(m)
 
-                    return out
+            when(children.size) {
+                0 -> {
+                    return out.setPosition(p).setSize(0f, 0f)
+                }
+                1 -> {
+                    return children[0].getBounds(targetSpace, out).merge(p)
+                }
+                else -> {
+                    Pool.Rectangle.use { r ->
+                        var first = true
+                        children.forEach {
+                            if(first) {
+                                it.getBounds(targetSpace, out)
+                                first = false
+                            }
+                            else {
+                                it.getBounds(targetSpace, r)
+                                out.merge(r)
+                            }
+                        }
+
+                        return out.merge(p)
+                    }
                 }
             }
-        }
+        }}
     }
 
     override fun hitTest(localPoint:Vector2):Display? {
