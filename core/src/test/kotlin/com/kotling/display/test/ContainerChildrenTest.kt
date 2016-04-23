@@ -1,6 +1,7 @@
-package com.kotling.display
+package com.kotling.display.test
 
-import com.badlogic.gdx.math.Rectangle
+import com.kotling.display.Container
+import com.kotling.display.Display
 import junit.framework.TestCase
 
 class ContainerChildrenTest: TestCase() {

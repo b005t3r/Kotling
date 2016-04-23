@@ -1,13 +1,15 @@
-package com.kotling.display
+package com.kotling.display.test
 
 import com.badlogic.gdx.math.Rectangle
+import com.kotling.display.Container
+import com.kotling.display.Display
 import com.kotling.poolable.use
 import com.kotling.rendering.Painter
 
 class TestDisplay(val initialWidth:Float = WIDTH, val initialHeight:Float = HEIGHT) : Display() {
     companion object {
         val WIDTH   = 10f
-        val HEIGHT  = 7f
+        val HEIGHT  = 5f
     }
 
     override fun getBounds(targetSpace:Display?, result:Rectangle?):Rectangle {
@@ -29,7 +31,7 @@ class TestDisplay(val initialWidth:Float = WIDTH, val initialHeight:Float = HEIG
             Pool.Vector2.free(p1)
             Pool.Vector2.free(p2)
 
-            return out;
+            return out
         }
     }
 

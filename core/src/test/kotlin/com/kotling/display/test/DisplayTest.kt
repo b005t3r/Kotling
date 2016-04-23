@@ -1,6 +1,7 @@
-package com.kotling.display
+package com.kotling.display.test
 
 import com.badlogic.gdx.math.MathUtils
+import com.kotling.display.Display
 import junit.framework.TestCase
 
 class DisplayTest : TestCase() {
@@ -87,66 +88,71 @@ class DisplayTest : TestCase() {
         assertEquals(TestDisplay.WIDTH, display.bounds.width)
         assertEquals(TestDisplay.HEIGHT, display.bounds.height)
 
-        display.x = 1.5f
-        display.y = 2.333f
-        display.width = 15f
-        display.height = 230.43f
+        val x = 5f
+        val y = 10f
+        val w = 50f
+        val h = 20f
 
-        assertEquals(1.5f, display.bounds.x)
-        assertEquals(2.333f, display.bounds.y)
-        assertEquals(15f, display.bounds.width)
-        assertEquals(230.43f, display.bounds.height)
-        assertEquals(15f / TestDisplay.WIDTH, display.scaleX)
-        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY)
+        display.x = x
+        display.y = y
+        display.width = w
+        display.height = h
+
+        assertEquals(x, display.bounds.x)
+        assertEquals(y, display.bounds.y)
+        assertEquals(w, display.bounds.width)
+        assertEquals(h, display.bounds.height)
+        assertEquals(w / TestDisplay.WIDTH, display.scaleX)
+        assertEquals(h / TestDisplay.HEIGHT, display.scaleY)
         assertEquals(0f, display.pivotAlignmentX)
         assertEquals(0f, display.pivotAlignmentY)
 
         display.pivotAlignmentX = 0.5f
         display.pivotAlignmentY = 0.5f
 
-        assertEquals(1.5f - 15f / 2f, display.bounds.x)
-        assertEquals(2.333f - 230.43f / 2f, display.bounds.y)
-        assertEquals(15f, display.bounds.width)
-        assertEquals(230.43f, display.bounds.height)
-        assertEquals(15f / TestDisplay.WIDTH, display.scaleX)
-        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY)
+        assertEquals(x - w / 2f, display.bounds.x)
+        assertEquals(y - h / 2f, display.bounds.y)
+        assertEquals(w, display.bounds.width)
+        assertEquals(h, display.bounds.height)
+        assertEquals(w / TestDisplay.WIDTH, display.scaleX)
+        assertEquals(h / TestDisplay.HEIGHT, display.scaleY)
         assertEquals(0.5f, display.pivotAlignmentX)
         assertEquals(0.5f, display.pivotAlignmentY)
 
         display.rotation = MathUtils.PI2
 
-        assertEquals(1.5f - 15f / 2f, display.bounds.x)
-        assertEquals(2.333f - 230.43f / 2f, display.bounds.y)
-        assertEquals(15f, display.bounds.width)
-        assertEquals(230.43f, display.bounds.height)
-        assertEquals(15f / TestDisplay.WIDTH, display.scaleX)
-        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY)
+        assertEquals(x - w / 2f, display.bounds.x)
+        assertEquals(y - h / 2f, display.bounds.y)
+        assertEquals(w, display.bounds.width)
+        assertEquals(h, display.bounds.height)
+        assertEquals(w / TestDisplay.WIDTH, display.scaleX)
+        assertEquals(h / TestDisplay.HEIGHT, display.scaleY)
 
         display.rotation = MathUtils.PI
 
-        assertEquals(1.5f - 15f / 2f, display.bounds.x, FLOAT_PRECISION)
-        assertEquals(2.333f - 230.43f / 2f, display.bounds.y, FLOAT_PRECISION)
-        assertEquals(15f, display.bounds.width, FLOAT_PRECISION)
-        assertEquals(230.43f, display.bounds.height, FLOAT_PRECISION)
-        assertEquals(15f / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
-        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
+        assertEquals(x - w / 2f, display.bounds.x, FLOAT_PRECISION)
+        assertEquals(y - h / 2f, display.bounds.y, FLOAT_PRECISION)
+        assertEquals(w, display.bounds.width, FLOAT_PRECISION)
+        assertEquals(h, display.bounds.height, FLOAT_PRECISION)
+        assertEquals(w / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
+        assertEquals(h / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
 
         display.rotation = MathUtils.PI / 2
 
-        assertEquals(1.5f - 230.43f / 2f, display.bounds.x, FLOAT_PRECISION)
-        assertEquals(2.333f - 15f / 2f, display.bounds.y, FLOAT_PRECISION)
-        assertEquals(230.43f, display.bounds.width, FLOAT_PRECISION)
-        assertEquals(15f, display.bounds.height, FLOAT_PRECISION)
-        assertEquals(15f / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
-        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
+        assertEquals(x - h / 2f, display.bounds.x, FLOAT_PRECISION)
+        assertEquals(y - w / 2f, display.bounds.y, FLOAT_PRECISION)
+        assertEquals(h, display.bounds.width, FLOAT_PRECISION)
+        assertEquals(w, display.bounds.height, FLOAT_PRECISION)
+        assertEquals(w / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
+        assertEquals(h / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
 
         display.rotation -= MathUtils.PI
 
-        assertEquals(1.5f - 230.43f / 2f, display.bounds.x, FLOAT_PRECISION)
-        assertEquals(2.333f - 15f / 2f, display.bounds.y, FLOAT_PRECISION)
-        assertEquals(230.43f, display.bounds.width, FLOAT_PRECISION)
-        assertEquals(15f, display.bounds.height, FLOAT_PRECISION)
-        assertEquals(15f / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
-        assertEquals(230.43f / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
+        assertEquals(x - h / 2f, display.bounds.x, FLOAT_PRECISION)
+        assertEquals(y - w / 2f, display.bounds.y, FLOAT_PRECISION)
+        assertEquals(h, display.bounds.width, FLOAT_PRECISION)
+        assertEquals(w, display.bounds.height, FLOAT_PRECISION)
+        assertEquals(w / TestDisplay.WIDTH, display.scaleX, FLOAT_PRECISION)
+        assertEquals(h / TestDisplay.HEIGHT, display.scaleY, FLOAT_PRECISION)
     }
 }

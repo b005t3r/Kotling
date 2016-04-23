@@ -1,7 +1,9 @@
-package com.kotling.display
+package com.kotling.display.test
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
+import com.kotling.display.Container
+import com.kotling.display.Display
 import junit.framework.TestCase
 
 class ContainerBoundsTest : TestCase() {
@@ -49,8 +51,8 @@ class ContainerBoundsTest : TestCase() {
         assertEquals(Rectangle(0f, 0f, displayA.width, displayA.height), containerA.bounds)
         assertEquals(Rectangle(0f, 0f, displayA.width, displayA.height), containerA.internalBounds)
 
-        displayA.x += 30f
-        displayA.y += 120f
+        displayA.x += 50
+        displayA.y += 100f
 
         assertEquals(0f, containerA.x)
         assertEquals(0f, containerA.y)
@@ -59,8 +61,8 @@ class ContainerBoundsTest : TestCase() {
         assertEquals(Rectangle(0f, 0f, displayA.x + displayA.width, displayA.y + displayA.height), containerA.bounds)
         assertEquals(Rectangle(0f, 0f, displayA.x + displayA.width, displayA.y + displayA.height), containerA.internalBounds)
 
-        displayA.x -= 60f
-        displayA.y -= 240f
+        displayA.x -= 100f
+        displayA.y -= 200f
 
         assertEquals(0f, containerA.x)
         assertEquals(0f, containerA.y)
@@ -78,5 +80,14 @@ class ContainerBoundsTest : TestCase() {
         assertEquals(Math.abs(displayA.y), containerA.height)
         assertEquals(Rectangle(100f + displayA.x, 200f + displayA.y, Math.abs(displayA.x), Math.abs(displayA.y)), containerA.bounds)
         assertEquals(Rectangle(displayA.x, displayA.y, Math.abs(displayA.x), Math.abs(displayA.y)), containerA.internalBounds)
+
+        displayA.rotation = MathUtils.PI / 2
+
+        assertEquals(100f, containerA.x)
+        assertEquals(200f, containerA.y)
+        assertEquals(Math.abs(displayA.x) + displayA.width, containerA.width)
+        assertEquals(Math.abs(displayA.y), containerA.height)
+        assertEquals(Rectangle(100f + displayA.x - displayA.width, 200f + displayA.y, Math.abs(displayA.x) + displayA.width, Math.abs(displayA.y)), containerA.bounds)
+        assertEquals(Rectangle(displayA.x - displayA.width, displayA.y, Math.abs(displayA.x) + displayA.width, Math.abs(displayA.y)), containerA.internalBounds)
     }
 }
