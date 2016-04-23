@@ -171,10 +171,10 @@ abstract class Display : Disposable {
         }
 
     val bounds = Rectangle()
-        get() = if(orientationChanged) getBounds(parent, field) else field
+        get() = getBounds(parent, field)
 
     val internalBounds = Rectangle()
-        get() = if(orientationChanged) getBounds(this, field) else field
+        get() = getBounds(this, field)
 
     var alpha = 1f
         set(value) {
