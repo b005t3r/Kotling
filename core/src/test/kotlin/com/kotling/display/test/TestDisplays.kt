@@ -6,10 +6,14 @@ import com.kotling.display.Display
 import com.kotling.poolable.use
 import com.kotling.rendering.Painter
 
-class TestDisplay(val initialWidth:Float = WIDTH, val initialHeight:Float = HEIGHT) : Display() {
+class TestDisplay(name:String = "", val initialWidth:Float = WIDTH, val initialHeight:Float = HEIGHT) : Display() {
     companion object {
         val WIDTH   = 10f
         val HEIGHT  = 5f
+    }
+
+    init {
+        this.name = name
     }
 
     override fun getBounds(targetSpace:Display?, result:Rectangle?):Rectangle {

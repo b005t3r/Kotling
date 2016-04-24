@@ -21,11 +21,11 @@ class ContainerBoundsTest : TestCase() {
         containerA  = TestContainer()
         containerB  = TestContainer()
         containerC  = TestContainer()
-        displayA    = TestDisplay()
-        displayB    = TestDisplay()
-        displayC    = TestDisplay()
-        displayD    = TestDisplay()
-        displayE    = TestDisplay()
+        displayA    = TestDisplay("a")
+        displayB    = TestDisplay("b")
+        displayC    = TestDisplay("c")
+        displayD    = TestDisplay("d")
+        displayE    = TestDisplay("e")
     }
 
     fun testEmpty() {
@@ -199,6 +199,8 @@ class ContainerBoundsTest : TestCase() {
         assertRectEquals(Rectangle(-10f, -22.5f, 30f, 52.5f), containerC.bounds)
 
         assertRectEquals(Rectangle(-6.666666f, -15f, 3.333333f, 5f), displayA.getBounds(null))
+        //println(displayA.getBounds(displayE))
+        //println(displayE.getBounds(displayA))
     }
 }
 
