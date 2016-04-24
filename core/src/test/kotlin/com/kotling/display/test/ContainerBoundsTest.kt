@@ -15,6 +15,7 @@ class ContainerBoundsTest : TestCase() {
     lateinit var displayB:Display
     lateinit var displayC:Display
     lateinit var displayD:Display
+    lateinit var displayE:Display
 
     override fun setUp() {
         containerA  = TestContainer()
@@ -24,6 +25,7 @@ class ContainerBoundsTest : TestCase() {
         displayB    = TestDisplay()
         displayC    = TestDisplay()
         displayD    = TestDisplay()
+        displayE    = TestDisplay()
     }
 
     fun testEmpty() {
@@ -117,18 +119,18 @@ class ContainerBoundsTest : TestCase() {
         displayC.pivotAlignmentY = 1f
         displayC.rotation = -MathUtils.PI / 2
 
-        assertEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
-        assertEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
-        assertEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
+        assertRectEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
+        assertRectEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
 
         containerA.children.add(displayA)
         containerA.children.add(displayB)
         containerA.children.add(displayC)
 
-        assertEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
-        assertEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
-        assertEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
-        assertEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
+        assertRectEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
+        assertRectEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
 
         displayD.x = 60f
         displayD.y = 35f
@@ -136,27 +138,67 @@ class ContainerBoundsTest : TestCase() {
         displayD.height = h
         displayD.rotation = -MathUtils.PI
 
-        assertEquals(Rectangle(50f, 25f, 10f, 10f), displayD.bounds)
+        assertRectEquals(Rectangle(50f, 25f, 10f, 10f), displayD.bounds)
 
         containerB.children.add(containerA)
         containerB.children.add(displayD)
 
-        assertEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
-        assertEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
-        assertEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
-        assertEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
-        assertEquals(Rectangle(50f, 25f, 10f, 10f), displayD.bounds)
-        assertEquals(Rectangle(-20f, -30f, 80f, 65f), containerB.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
+        assertRectEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
+        assertRectEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
+        assertRectEquals(Rectangle(50f, 25f, 10f, 10f), displayD.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 80f, 65f), containerB.bounds)
 
         displayD.scaleX *= 7f
         displayD.scaleY *= 8f
 
-        assertEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
-        assertEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
-        assertEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
-        assertEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
+        assertRectEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
+        assertRectEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
         assertRectEquals(Rectangle(-10f, -45f, 70f, 80f), displayD.bounds)
         assertRectEquals(Rectangle(-20f, -45f, 80f, 80f), containerB.bounds)
+
+        containerB.scaleY = 0.5f
+
+        assertRectEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
+        assertRectEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
+        assertRectEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
+        assertRectEquals(Rectangle(-10f, -45f, 70f, 80f), displayD.bounds)
+        assertRectEquals(Rectangle(-20f, -22.5f, 80f, 40f), containerB.bounds)
+
+        displayE.x = -20f
+        displayE.y = 20f
+        displayE.width = 10f
+        displayE.height = 10f
+        displayE.pivotAlignmentX = 1f
+
+        containerC.children.add(displayE)
+        containerC.children.add(containerB)
+
+        assertRectEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
+        assertRectEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
+        assertRectEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
+        assertRectEquals(Rectangle(-10f, -45f, 70f, 80f), displayD.bounds)
+        assertRectEquals(Rectangle(-20f, -22.5f, 80f, 40f), containerB.bounds)
+        assertRectEquals(Rectangle(-30f, 20f, 10f, 10f), displayE.bounds)
+        assertRectEquals(Rectangle(-30f, -22.5f, 90f, 52.5f), containerC.bounds)
+
+        containerC.scaleX = 1f / 3f
+
+        assertRectEquals(Rectangle(-20f, -30f, 10f, 10f), displayA.bounds)
+        assertRectEquals(Rectangle(0f, 0f, 10f, 10f), displayB.bounds)
+        assertRectEquals(Rectangle(30f, -20f, 10f, 10f), displayC.bounds)
+        assertRectEquals(Rectangle(-20f, -30f, 60f, 40f), containerA.bounds)
+        assertRectEquals(Rectangle(-10f, -45f, 70f, 80f), displayD.bounds)
+        assertRectEquals(Rectangle(-20f, -22.5f, 80f, 40f), containerB.bounds)
+        assertRectEquals(Rectangle(-30f, 20f, 10f, 10f), displayE.bounds)
+        assertRectEquals(Rectangle(-10f, -22.5f, 30f, 52.5f), containerC.bounds)
+
+        assertRectEquals(Rectangle(-6.666666f, -15f, 3.333333f, 5f), displayA.getBounds(null))
     }
 }
 
