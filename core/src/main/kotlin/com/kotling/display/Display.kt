@@ -233,6 +233,7 @@ abstract class Display : Disposable {
                 else {
                     throw UnsupportedOperationException("handling skewX and skewY has bugs")
 
+/*
                     field.idt().scale(scaleX, scaleY).skew(skewX, skewY).rotateRad(rotation).translate(x, y);
 
                     if (pivotX != 0f || pivotY != 0f) {
@@ -242,6 +243,7 @@ abstract class Display : Disposable {
                     }
 
                     return field
+*/
                 }
         }
         set(value) {
