@@ -29,7 +29,7 @@ object VertexAttributesCache {
     }
 
     operator fun getValue(thisRef:Any?, property:KProperty<*>):VertexAttributes {
-        val vertexFormat:VertexFormat = property.annotations.find { it is VertexFormat } as VertexFormat? ?: throw IllegalArgumentException("property not annotated with @VertexFormat")
+        val vertexFormat:VertexFormat = property.annotations.find { it is VertexFormat } as VertexFormat? ?: throw UninitializedPropertyAccessException("property not annotated with @VertexFormat")
 
         return VertexAttributesCache.fromAnnotation(vertexFormat)
     }
