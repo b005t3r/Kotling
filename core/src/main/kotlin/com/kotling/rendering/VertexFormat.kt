@@ -2,6 +2,7 @@ package com.kotling.rendering
 
 import com.badlogic.gdx.graphics.VertexAttribute
 import com.badlogic.gdx.graphics.VertexAttributes
+import kotlin.reflect.KProperty
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class VertexFormat(vararg val format:String = arrayOf("position:float2"))
@@ -25,6 +26,12 @@ object VertexAttributesCache {
         attribues[format] = attrs
 
         return attrs
+    }
+
+    operator fun getValue(thisRef:Any?, property:KProperty<*>):VertexAttributes {
+        val vertexFormat:VertexFormat = property.annotations.find { it is VertexFormat } as VertexFormat? ?: throw IllegalArgumentException("property not annotated with @VertexFormat")
+
+        return VertexAttributesCache.fromAnnotation(vertexFormat)
     }
 
     private fun create(vararg format:String):VertexAttributes {
