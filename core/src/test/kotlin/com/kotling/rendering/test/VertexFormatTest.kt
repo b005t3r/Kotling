@@ -27,6 +27,11 @@ class VertexFormatTest : TestCase() {
 
         val subjectC = TestSubjectC()
         assertNotEquals(subjectA.attributes, subjectC.attributes)
+
+        val subjectD = TestSubjectD()
+        assertNotEquals(subjectC.attributes, subjectD.attributes)
+        assertEquals(subjectA.attributes, subjectD.attributes)
+        assertEquals(subjectB.attributes, subjectD.attributes)
     }
 }
 
@@ -44,7 +49,12 @@ class TestSubjectB {
     val attributes:VertexAttributes by VertexAttributesCache
 }
 
-class TestSubjectC {
+open class TestSubjectC {
     @VertexFormat("position:float2", "uv:float2", "color:byte4")
-    val attributes:VertexAttributes by VertexAttributesCache
+    open val attributes:VertexAttributes by VertexAttributesCache
+}
+
+class TestSubjectD : TestSubjectC() {
+    @VertexFormat("position:float2", "color:byte4", "uv:float2")
+    override val attributes:VertexAttributes by VertexAttributesCache
 }
