@@ -8,8 +8,8 @@ import kotlin.reflect.KProperty
 annotation class VertexFormat(vararg val format:String = arrayOf("position:float2"))
 
 object VertexAttributesCache {
-    private val componentCountPerType = mutableMapOf<String, Int>("float1" to 1, "float2" to 2, "float3" to 3, "float4" to 4, "byte4" to 4)
-    private val attribues:MutableMap<Array<out String>, VertexAttributes> = mutableMapOf()
+    private val componentCountPerType = mutableMapOf("float1" to 1, "float2" to 2, "float3" to 3, "float4" to 4, "byte4" to 4)
+    private val attributes:MutableMap<Array<out String>, VertexAttributes> = mutableMapOf()
 
     fun fromAnnotation(format:VertexFormat):VertexAttributes = fromString(*format.format)
 
@@ -17,13 +17,13 @@ object VertexAttributesCache {
         if(format.size == 0)
             throw IllegalArgumentException("invalid format: $format")
 
-        var attrs:VertexAttributes? = attribues[format]
+        var attrs:VertexAttributes? = attributes[format]
 
         if(attrs != null)
             return attrs
 
         attrs = create(*format)
-        attribues[format] = attrs
+        attributes[format] = attrs
 
         return attrs
     }
