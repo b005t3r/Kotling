@@ -1,4 +1,4 @@
-package com.kotling.rendering
+package com.kotling.rendering.test
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.ApplicationAdapter
@@ -7,6 +7,8 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import com.kotling.rendering.Shader
+import com.kotling.rendering.ShaderProgramCache
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Test
@@ -43,20 +45,20 @@ class ShaderTest {
         assertNotEquals(subjectA.colorShader, subjectB.textureShader)
         assertNotEquals(subjectA.textureShader, subjectB.colorShader)
     }
-}
 
-class TestSubjectA {
-    @Shader("shaders/Colored")
-    val colorShader:ShaderProgram by ShaderProgramCache
+    class TestSubjectA {
+        @Shader("shaders/Colored")
+        val colorShader:ShaderProgram by ShaderProgramCache
 
-    @Shader("shaders/Textured")
-    val textureShader:ShaderProgram by ShaderProgramCache
-}
+        @Shader("shaders/Textured")
+        val textureShader:ShaderProgram by ShaderProgramCache
+    }
 
-class TestSubjectB {
-    @Shader("shaders/Colored")
-    val colorShader:ShaderProgram by ShaderProgramCache
+    class TestSubjectB {
+        @Shader("shaders/Colored")
+        val colorShader:ShaderProgram by ShaderProgramCache
 
-    @Shader("shaders/Textured")
-    val textureShader:ShaderProgram by ShaderProgramCache
+        @Shader("shaders/Textured")
+        val textureShader:ShaderProgram by ShaderProgramCache
+    }
 }
