@@ -62,7 +62,10 @@ project(":core") {
         compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
         testCompile 'junit:junit:4.12'
+        testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+        testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        testCompile "org.mockito:mockito-core:1.+"
     }
 }
 
