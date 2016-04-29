@@ -5,6 +5,7 @@ import com.kotling.display.Container
 import com.kotling.display.Display
 import com.kotling.poolable.use
 import com.kotling.rendering.Painter
+import com.kotling.util.Pool
 
 class TestDisplay(name:String = "", val initialWidth:Float = WIDTH, val initialHeight:Float = HEIGHT) : Display() {
     companion object {

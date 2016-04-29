@@ -14,12 +14,6 @@ import com.kotling.rendering.Painter
 import com.kotling.util.*
 
 abstract class Display : Disposable {
-    object Pool {
-        val Vector2     = Pools.get(PoolableVector2::class.java)
-        val Rectangle   = Pools.get(PoolableRectangle::class.java)
-        val Matrix3     = Pools.get(PoolableMatrix3::class.java)
-    }
-
     companion object {
         private val ancestors = mutableListOf<Display>()
 
