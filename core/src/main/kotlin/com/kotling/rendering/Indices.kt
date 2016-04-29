@@ -1,6 +1,6 @@
 package com.kotling.rendering
 
-class IndexData(initialCapacity:Int = 48) : Iterable<Short>, Sequence<Short>, Cloneable {
+class Indices(initialCapacity:Int = 48) : Iterable<Short>, Sequence<Short>, Cloneable {
     var size = 0
         private set
 
@@ -16,7 +16,7 @@ class IndexData(initialCapacity:Int = 48) : Iterable<Short>, Sequence<Short>, Cl
         rawData = ShortArray(newCapacity, { i -> if(i < rawData.size) rawData[i] else 0 });
     }
 
-    fun copyTo(target:IndexData, targetIndexID:Int = 0, offset:Short = 0, indexID:Int = 0, count:Int = -1) {
+    fun copyTo(target:Indices, targetIndexID:Int = 0, offset:Short = 0, indexID:Int = 0, count:Int = -1) {
         val numIndices = if(count < 0 || indexID + count > size) size - indexID else count
         val newSize = targetIndexID + numIndices
 
@@ -24,14 +24,23 @@ class IndexData(initialCapacity:Int = 48) : Iterable<Short>, Sequence<Short>, Cl
 
         for(i in 0..newSize - 1)
             target.rawData[targetIndexID + i] = (rawData[indexID + i] + offset).toShort()
+
+        target.size = newSize
     }
 
     operator fun get(i:Int):Short = if(i < size) rawData[i] else throw IndexOutOfBoundsException("index $i is outside 0..${size - 1}")
     operator fun set(i:Int, value:Short) = if(i < size) rawData.set(i, value) else throw IndexOutOfBoundsException("index $i is outside 0..${size - 1}")
 
+    fun add(index:Short) {
+        ensureCapacity(size + 1)
+
+        rawData[size]   = index
+        size           += 1
+    }
+
     /** Appends three indices representing a triangle. Reference the vertices clockwise,
      *  as this defines the front side of the triangle. */
-    fun addTriangle(a:Short, b:Short, c:Short) {
+    fun add(a:Short, b:Short, c:Short) {
         ensureCapacity(size + 3)
 
         rawData[size]       = a
@@ -52,7 +61,7 @@ class IndexData(initialCapacity:Int = 48) : Iterable<Short>, Sequence<Short>, Cl
     }
 
     override fun equals(other:Any?):Boolean {
-        if(other !is IndexData || size != other.size)
+        if(other !is Indices || size != other.size)
             return false
 
         for(i in 0..size - 1)
@@ -62,8 +71,8 @@ class IndexData(initialCapacity:Int = 48) : Iterable<Short>, Sequence<Short>, Cl
         return true
     }
 
-    override fun clone():Any {
-        var clone = IndexData(rawData.size)
+    override public fun clone():Any {
+        var clone = Indices(rawData.size)
         clone.size = size
 
         for(i in 0..size)
