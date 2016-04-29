@@ -1,22 +1,47 @@
 package com.kotling.rendering
 
-class Indices(initialCapacity:Int = 48) : Iterable<Short>, Sequence<Short>, Cloneable {
+class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Short>, Cloneable {
+    companion object {
+        const val MIN_CAPACITY:Int = 48
+    }
+    
     var size = 0
         private set
 
-    private var rawData = ShortArray(initialCapacity)
+    var rawData = ShortArray(Math.max(MIN_CAPACITY, initialCapacity))
+        private set
 
     // does not free memory
-    fun clear() { size = 0 }
+    fun clear(trim:Boolean = false) {
+        size = 0
+
+        if(trim)
+            trim()
+    }
+
+    fun trim() {
+        if(rawData.size > MIN_CAPACITY)
+            rawData = ShortArray(Math.max(size, MIN_CAPACITY), { i -> rawData[i] })
+    }
 
     fun ensureCapacity(newCapacity:Int) {
         if(rawData.size >= newCapacity)
             return
 
-        rawData = ShortArray(newCapacity, { i -> if(i < rawData.size) rawData[i] else 0 });
+        val newSize = ((newCapacity / MIN_CAPACITY) + 1) * MIN_CAPACITY
+        rawData = ShortArray(newSize, { i -> if(i < rawData.size) rawData[i] else -1 });
     }
 
     fun copyTo(target:Indices, targetIndexID:Int = 0, offset:Short = 0, indexID:Int = 0, count:Int = -1) {
+        if(targetIndexID !in 0..target.size)
+            throw IndexOutOfBoundsException("targetIndexID $targetIndexID is outside 0..${target.size - 1}")
+
+        if(size == 0)
+            return
+
+        if(indexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $indexID is outside 0..${size - 1}")
+
         val numIndices = if(count < 0 || indexID + count > size) size - indexID else count
         val newSize = targetIndexID + numIndices
 
@@ -28,25 +53,41 @@ class Indices(initialCapacity:Int = 48) : Iterable<Short>, Sequence<Short>, Clon
         target.size = newSize
     }
 
-    operator fun get(i:Int):Short = if(i < size) rawData[i] else throw IndexOutOfBoundsException("index $i is outside 0..${size - 1}")
-    operator fun set(i:Int, value:Short) = if(i < size) rawData.set(i, value) else throw IndexOutOfBoundsException("index $i is outside 0..${size - 1}")
+    operator fun get(i:Int):Short = if(i in 0..size - 1) rawData[i] else throw IndexOutOfBoundsException("index $i is outside 0..${size - 1}")
+    operator fun set(i:Int, value:Short) = if(i in 0..size - 1) rawData.set(i, value) else throw IndexOutOfBoundsException("index $i is outside 0..${size - 1}")
 
-    fun add(index:Short) {
+    fun add(index:Short):Indices {
         ensureCapacity(size + 1)
 
         rawData[size]   = index
         size           += 1
+
+        return this
     }
 
     /** Appends three indices representing a triangle. Reference the vertices clockwise,
      *  as this defines the front side of the triangle. */
-    fun add(a:Short, b:Short, c:Short) {
+    fun add(a:Short, b:Short, c:Short):Indices {
         ensureCapacity(size + 3)
 
         rawData[size]       = a
         rawData[size + 1]   = b
         rawData[size + 2]   = c
         size               += 3
+
+        return this
+    }
+
+    fun offset(offset:Short, indexID:Int = 0, count:Int = -1):Indices {
+        if(indexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("index $indexID is outside 0..${size - 1}")
+
+        val numIndices = if(count < 0 || indexID + count > size) size - indexID else count
+
+        for(i in indexID..indexID + numIndices - 1)
+            this[i] = (this[i] + offset).toShort()
+
+        return this
     }
 
     override fun toString():String = "size: $size, rawData: $rawData"

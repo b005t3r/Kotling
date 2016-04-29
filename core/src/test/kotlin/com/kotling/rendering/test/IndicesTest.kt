@@ -27,8 +27,8 @@ class IndicesTest {
     @Test fun testAddTriangle() {
         assertEquals(0, buffer.size)
 
-        buffer.add(1, 2, 3);
-        buffer.add(2, 3, 4);
+        buffer.add(1, 2, 3)
+        buffer.add(2, 3, 4)
 
         assertEquals(6, buffer.size)
         assertEquals(1, buffer[0])
@@ -40,10 +40,10 @@ class IndicesTest {
     }
 
     @Test fun testCopyTo() {
-        buffer.add(1, 2, 3);
-        buffer.add(2, 4, 3);
-        buffer.add(5, 6, 7);
-        buffer.add(6, 8, 7);
+        buffer.add(1, 2, 3)
+        buffer.add(2, 4, 3)
+        buffer.add(5, 6, 7)
+        buffer.add(6, 8, 7)
 
         val other = Indices(0)
 
@@ -55,10 +55,10 @@ class IndicesTest {
     }
 
     @Test fun testClone() {
-        buffer.add(1, 2, 3);
-        buffer.add(2, 4, 3);
-        buffer.add(5, 6, 7);
-        buffer.add(6, 8, 7);
+        buffer.add(1, 2, 3)
+        buffer.add(2, 4, 3)
+        buffer.add(5, 6, 7)
+        buffer.add(6, 8, 7)
 
         val clone = buffer.clone()
 
@@ -69,10 +69,10 @@ class IndicesTest {
     @Test fun testClear() {
         assertEquals(0, buffer.size)
 
-        buffer.add(1, 2, 3);
-        buffer.add(2, 4, 3);
-        buffer.add(5, 6, 7);
-        buffer.add(6, 8, 7);
+        buffer.add(1, 2, 3)
+        buffer.add(2, 4, 3)
+        buffer.add(5, 6, 7)
+        buffer.add(6, 8, 7)
 
         assertEquals(12, buffer.size)
 
@@ -80,14 +80,20 @@ class IndicesTest {
 
         assertEquals(0, buffer.size)
 
-        buffer.add(1, 2, 3);
-        buffer.add(2, 4, 3);
-        buffer.add(5, 6, 7);
-        buffer.add(6, 8, 7);
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
+        buffer.add(1, 2, 3).add(2, 4, 3).add(5, 6, 7).add(6, 8, 7)
 
-        assertEquals(12, buffer.size)
+        assertEquals(120, buffer.size)
 
-        buffer.clear()
+        buffer.clear(true)
 
         assertEquals(0, buffer.size)
     }
