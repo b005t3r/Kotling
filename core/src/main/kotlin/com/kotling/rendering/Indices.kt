@@ -11,7 +11,6 @@ class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Sh
     var rawData = ShortArray(Math.max(MIN_CAPACITY, initialCapacity))
         private set
 
-    // does not free memory
     fun clear(trim:Boolean = false) {
         size = 0
 
