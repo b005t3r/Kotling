@@ -1,5 +1,6 @@
 package com.kotling.util.poolable
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
@@ -15,6 +16,10 @@ class PoolableMatrix3 : Matrix3(), Pool.Poolable {
 
 class PoolableRectangle : Rectangle(), Pool.Poolable {
     override fun reset() { set(0f, 0f, 0f, 0f) }
+}
+
+class PoolableColor : Color(), Pool.Poolable {
+    override fun reset() { this.set(0.0f, 0.0f, 0.0f, 0.0f) }
 }
 
 inline fun <T : Pool.Poolable, R> T.use(pool:Pool<T>, block : (T) -> R): R {
