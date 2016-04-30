@@ -1,9 +1,17 @@
 package com.kotling.util
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.NumberUtils
 
-fun Float.fromFloatBits():Int {
-    var c = NumberUtils.floatToIntBits(this) and 0xfeffffff.toInt()
+fun Color.set(abgr:Float):Color {
+    var abgri = NumberUtils.floatToIntBits(abgr)
 
-    return if(c and 0xfe000000.toInt() == 0) c and 0x00ffffff.toInt() else c or 0x01000000
+    val ai = abgri and 0xfe000000.toInt() ushr 24
+
+    a = (if(ai != 0) ai or 0x01 else ai) / 255.0f
+    b = (abgri and 0x00ff0000 ushr 16) / 255.0f
+    g = (abgri and 0x0000ff00 ushr 8) / 255.0f
+    r = (abgri and 0x000000ff) / 255.0f
+
+    return this
 }

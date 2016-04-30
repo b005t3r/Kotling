@@ -45,5 +45,21 @@ class VerticesTest {
         set(3, 0, x + w, y + h).set(3, 2, Color.BLUE).set(3, 3, Vector2(1f, 1f));
 
         assertEquals(4, buffer.size)
+
+        assertEquals(Vector2(x, y), buffer.get(0, 0, null as Vector2?))
+        assertEquals(Color.WHITE, buffer.get(0, 2, null as Color?))
+        assertEquals(Vector2(0f, 0f), buffer.get(0, 3, null as Vector2?))
+
+        assertEquals(Vector2(x + w, y), buffer.get(1, 0, null as Vector2?))
+        assertEquals(Color.RED, buffer.get(1, 2, null as Color?))
+        assertEquals(Vector2(1f, 0f), buffer.get(1, 3, null as Vector2?))
+
+        assertEquals(Vector2(x, y + h), buffer.get(2, 0, null as Vector2?))
+        assertEquals(Color.GREEN, buffer.get(2, 2, null as Color?))
+        assertEquals(Vector2(0f, 1f), buffer.get(2, 3, null as Vector2?))
+
+        assertEquals(Vector2(x + w, y + h), buffer.get(3, 0, null as Vector2?))
+        assertEquals(Color.BLUE, buffer.get(3, 2, null as Color?))
+        assertEquals(Vector2(1f, 1f), buffer.get(3, 3, null as Vector2?))
     }
 }

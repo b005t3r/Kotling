@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.kotling.util.Pool
-import com.kotling.util.fromFloatBits
 import com.kotling.util.poolable.use
+import com.kotling.util.set
 
 class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
     companion object {
@@ -310,6 +310,6 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
 
         val totalOffset = vertexID * componentCount + offset
 
-        return out.set(rawData[totalOffset].fromFloatBits())
+        return out.set(rawData[totalOffset])
     }
 }
