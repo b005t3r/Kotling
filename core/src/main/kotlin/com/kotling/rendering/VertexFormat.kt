@@ -35,15 +35,36 @@ object VertexAttributesCache {
     }
 
     private fun create(vararg format:String):VertexAttributes {
+        var hasPosition = false
+
         var attrs = Array(
             format.size,
             fun(i:Int):VertexAttribute {
                 val parts = format[i].split(":")
                 val name = parts[0]
                 val type = parts[1]
-                return VertexAttribute(getUsage(name), getComponentCount(type), name)
+                val usage = getUsage(name)
+
+                if(! hasPosition && usage == VertexAttributes.Usage.Position)
+                    hasPosition = true
+
+                return when {
+                    usage == VertexAttributes.Usage.ColorPacked && type != "byte4" ->
+                        throw IllegalArgumentException("invalid type for $name: colors have to use 'byte4' type")
+
+                    usage == VertexAttributes.Usage.TextureCoordinates && type != "float2" ->
+                        throw IllegalArgumentException("invalid type for $name: texture coordinates have to use 'float2' type")
+
+                    usage == VertexAttributes.Usage.Position && type != "float2" ->
+                        throw IllegalArgumentException("invalid type for $name: positions have to use 'float2' type")
+
+                    else -> VertexAttribute(usage, getComponentCount(type), name)
+                }
             }
         );
+
+        if(! hasPosition)
+            throw IllegalArgumentException("position attribute not present in $format")
 
         return VertexAttributes(*attrs)
     }
