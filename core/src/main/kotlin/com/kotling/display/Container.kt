@@ -2,7 +2,7 @@ package com.kotling.display
 
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
-import com.kotling.poolable.use
+import com.kotling.util.poolable.use
 import com.kotling.rendering.Painter
 import com.kotling.util.Pool
 

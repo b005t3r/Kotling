@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.Pools
-import com.kotling.poolable.PoolableMatrix3
-import com.kotling.poolable.PoolableRectangle
-import com.kotling.poolable.PoolableVector2
-import com.kotling.poolable.use
+import com.kotling.util.poolable.PoolableMatrix3
+import com.kotling.util.poolable.PoolableRectangle
+import com.kotling.util.poolable.PoolableVector2
+import com.kotling.util.poolable.use
 import com.kotling.rendering.Painter
 import com.kotling.util.*
 

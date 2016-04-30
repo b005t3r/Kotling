@@ -1,4 +1,4 @@
-package com.kotling.poolable
+package com.kotling.util.poolable
 
 import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Rectangle

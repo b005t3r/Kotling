@@ -1,9 +1,9 @@
 package com.kotling.util
 
 import com.badlogic.gdx.utils.Pools
-import com.kotling.poolable.PoolableMatrix3
-import com.kotling.poolable.PoolableRectangle
-import com.kotling.poolable.PoolableVector2
+import com.kotling.util.poolable.PoolableMatrix3
+import com.kotling.util.poolable.PoolableRectangle
+import com.kotling.util.poolable.PoolableVector2
 
 object Pool {
     val Vector2     = Pools.get(PoolableVector2::class.java)
