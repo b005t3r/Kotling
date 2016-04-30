@@ -1,22 +1,37 @@
 package com.kotling.rendering
 
-import com.badlogic.gdx.graphics.VertexAttribute
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.math.Matrix3
-import com.kotling.util.poolable.use
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector3
 import com.kotling.util.Pool
+import com.kotling.util.fromFloatBits
+import com.kotling.util.poolable.use
 
 class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
     companion object {
-        const val MIN_CAPACITY:Int = 32
+        const val MIN_CAPACITY:Int = 4
     }
 
     init {
-        for(attr in attributes)
+        var offset = 0
+
+        for(attr in attributes) {
+            if(positionOffset < 0) {
+                if(attr.usage == VertexAttributes.Usage.Position)
+                    positionOffset = offset
+                else if(attr.usage == VertexAttributes.Usage.ColorPacked)
+                    ++offset
+                else
+                    offset += attr.numComponents
+            }
+
             if(attr.usage == VertexAttributes.Usage.ColorPacked)
                 ++componentCount
             else
                 componentCount += attr.numComponents
+        }
     }
 
     var componentCount = 0
@@ -31,9 +46,6 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
 
         for(attr in attributes) {
             map[attr.alias] = offset
-
-            if(positionOffset < 0 && attr.usage == VertexAttributes.Usage.Position)
-                positionOffset = offset
 
             if(attr.usage == VertexAttributes.Usage.ColorPacked)
                 ++offset
@@ -58,16 +70,18 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
     }
 
     fun trim() {
-        if(rawData.size > MIN_CAPACITY)
-            rawData = FloatArray(Math.max(size, MIN_CAPACITY), { i -> rawData[i] })
+        if(rawData.size > MIN_CAPACITY * componentCount)
+            rawData = FloatArray(Math.max(size * componentCount, MIN_CAPACITY * componentCount), { i -> rawData[i] })
     }
 
-    fun ensureCapacity(newCapacity:Int) {
+    fun ensureCapacity(newCapacity:Int):Vertices {
         if(rawData.size >= newCapacity * componentCount)
-            return
+            return this
 
         val newSize = ((newCapacity / MIN_CAPACITY) + 1) * MIN_CAPACITY * componentCount
         rawData = FloatArray(newSize, { i -> if(i < rawData.size) rawData[i] else Float.NaN });
+
+        return this
     }
 
     fun copyTo(target:Vertices, targetVertexID:Int = 0, matrix:Matrix3? = null, vertexID:Int = 0, count:Int = -1) {
@@ -154,5 +168,148 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
                 }
             }
         }
+    }
+
+    fun add():Vertices = ensureCapacity(++size)
+
+    fun add(count:Int):Vertices {
+        size += count
+        ensureCapacity(size)
+
+        return this
+    }
+
+    fun set(vertexID:Int, offset:Int, value:Float):Vertices {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        rawData[vertexID * componentCount + offset] = value
+
+        return this
+    }
+
+    fun set(vertexID:Int, offset:Int, x:Float, y:Float):Vertices {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val totalOffset = vertexID * componentCount + offset
+        rawData[totalOffset]        = x
+        rawData[totalOffset + 1]    = y
+
+        return this
+    }
+
+    fun set(vertexID:Int, offset:Int, p:Vector2):Vertices {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val totalOffset = vertexID * componentCount + offset
+        rawData[totalOffset]        = p.x
+        rawData[totalOffset + 1]    = p.y
+
+        return this
+    }
+
+    fun set(vertexID:Int, offset:Int, x:Float, y:Float, z:Float):Vertices {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val totalOffset = vertexID * componentCount + offset
+        rawData[totalOffset]        = x
+        rawData[totalOffset + 1]    = y
+        rawData[totalOffset + 2]    = z
+
+        return this
+    }
+
+    fun set(vertexID:Int, offset:Int, p:Vector3):Vertices {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val totalOffset = vertexID * componentCount + offset
+        rawData[totalOffset]        = p.x
+        rawData[totalOffset + 1]    = p.y
+        rawData[totalOffset + 2]    = p.z
+
+        return this
+    }
+
+    fun set(vertexID:Int, offset:Int, x:Float, y:Float, z:Float, w:Float):Vertices {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val totalOffset = vertexID * componentCount + offset
+        rawData[totalOffset]        = x
+        rawData[totalOffset + 1]    = y
+        rawData[totalOffset + 2]    = z
+        rawData[totalOffset + 3]    = w
+
+        return this
+    }
+
+    fun set(vertexID:Int, offset:Int, c:Color):Vertices {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val totalOffset = vertexID * componentCount + offset
+        rawData[totalOffset] = c.toFloatBits()
+
+        return this
+    }
+
+    fun get(vertexID:Int, offset:Int):Float {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        return rawData[vertexID * componentCount + offset]
+    }
+
+    fun get(vertexID:Int, offset:Int, result:Vector2? = null):Vector2 {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val out = result ?: Vector2()
+
+        val totalOffset = vertexID * componentCount + offset
+        return out.set(rawData[totalOffset], rawData[totalOffset + 1])
+    }
+
+    fun get(vertexID:Int, offset:Int, result:Vector3? = null):Vector3 {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val out = result ?: Vector3()
+
+        val totalOffset = vertexID * componentCount + offset
+        return out.set(rawData[totalOffset], rawData[totalOffset + 1], rawData[totalOffset + 2])
+    }
+
+    fun get(vertexID:Int, offset:Int, result:FloatArray? = null):FloatArray {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        if(result != null && result.size < 4)
+            throw IllegalArgumentException("result has to be at least of size 4 or null (current size: ${result.size})")
+
+        val out = result ?: FloatArray(4)
+
+        val totalOffset = vertexID * componentCount + offset
+        out[0] = rawData[totalOffset]
+        out[1] = rawData[totalOffset + 1]
+        out[2] = rawData[totalOffset + 2]
+        out[3] = rawData[totalOffset + 3]
+
+        return out
+    }
+
+    fun get(vertexID:Int, offset:Int, result:Color? = null):Color {
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val out = result ?: Color()
+
+        val totalOffset = vertexID * componentCount + offset
+
+        return out.set(rawData[totalOffset].fromFloatBits())
     }
 }

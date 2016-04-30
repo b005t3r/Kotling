@@ -23,12 +23,14 @@ class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Sh
             rawData = ShortArray(Math.max(size, MIN_CAPACITY), { i -> rawData[i] })
     }
 
-    fun ensureCapacity(newCapacity:Int) {
+    fun ensureCapacity(newCapacity:Int):Indices {
         if(rawData.size >= newCapacity)
-            return
+            return this
 
         val newSize = ((newCapacity / MIN_CAPACITY) + 1) * MIN_CAPACITY
         rawData = ShortArray(newSize, { i -> if(i < rawData.size) rawData[i] else -1 });
+
+        return this
     }
 
     fun copyTo(target:Indices, targetIndexID:Int = 0, offset:Short = 0, indexID:Int = 0, count:Int = -1) {
