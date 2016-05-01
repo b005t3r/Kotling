@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.utils.Disposable
 
-abstract class Renderer(initialMaxVertexCount:Int = MIN_VERTICES, initialMaxIndexCount:Int = MIN_INDICES) :Disposable {
+abstract class Renderer(initialMaxVertexCount:Int = Renderer.MIN_VERTICES, initialMaxIndexCount:Int = Renderer.MIN_INDICES) :Disposable {
     companion object {
         const val MIN_VERTICES:Int  = 32
         const val MIN_INDICES:Int   = 48

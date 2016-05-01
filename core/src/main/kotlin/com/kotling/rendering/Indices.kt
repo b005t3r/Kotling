@@ -81,7 +81,7 @@ class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Sh
         return this
     }
 
-    fun copyTo(target:Indices, targetIndexID:Int = 0, offset:Short = 0, indexID:Int = 0, count:Int = -1) {
+    fun copyTo(target:Indices, targetIndexID:Int = 0, offset:Short = 0, indexID:Int = 0, count:Int = size - indexID) {
         if(targetIndexID !in 0..target.size)
             throw IndexOutOfBoundsException("targetIndexID $targetIndexID is outside 0..${target.size - 1}")
 
@@ -127,7 +127,7 @@ class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Sh
         return this
     }
 
-    fun offset(offset:Short, indexID:Int = 0, count:Int = -1):Indices {
+    fun offset(offset:Short, indexID:Int = 0, count:Int = size - indexID):Indices {
         if(indexID !in 0..size - 1)
             throw IndexOutOfBoundsException("index $indexID is outside 0..${size - 1}")
 

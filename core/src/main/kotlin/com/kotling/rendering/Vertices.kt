@@ -32,6 +32,9 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
                 ++componentCount
             else
                 componentCount += attr.numComponents
+
+            if(positionOffset < 0)
+                throw IllegalArgumentException("position not defined in attributes: $attributes")
         }
     }
 
@@ -85,7 +88,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
         return this
     }
 
-    fun copyTo(target:Vertices, targetVertexID:Int = 0, matrix:Matrix3? = null, vertexID:Int = 0, count:Int = -1) {
+    fun copyTo(target:Vertices, targetVertexID:Int = 0, matrix:Matrix3? = null, vertexID:Int = 0, count:Int = size - vertexID) {
         if(targetVertexID !in 0..target.size)
             throw IndexOutOfBoundsException("targetIndexID $targetVertexID is outside 0..${target.size - 1}")
 
@@ -133,7 +136,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
         target.size = newSize
     }
 
-    inline fun copyTo(target:Vertices, targetVertexID:Int = 0, vertexID:Int = 0, count:Int = -1, block : (vertexID:Int, targetVertexID:Int, attrID:Int, src:FloatArray, srcOffset:Int, dst:FloatArray, dstOffset:Int, count:Int) -> Unit) {
+    inline fun copyTo(target:Vertices, targetVertexID:Int = 0, vertexID:Int = 0, count:Int = size - vertexID, block : (vertexID:Int, targetVertexID:Int, attrID:Int, src:FloatArray, srcOffset:Int, dst:FloatArray, dstOffset:Int, count:Int) -> Unit) {
         if(targetVertexID !in 0..target.size)
             throw IndexOutOfBoundsException("targetIndexID $targetVertexID is outside 0..${target.size - 1}")
 
@@ -171,7 +174,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
         target.size = newSize
     }
 
-    fun forEach(vertexID:Int = 0, count:Int = -1, block : (vertexID:Int, attrID:Int, src:FloatArray, srcOffset:Int, count:Int) -> Unit) {
+    inline fun forEach(vertexID:Int = 0, count:Int = size - vertexID, block : (vertexID:Int, attrID:Int, src:FloatArray, srcOffset:Int, count:Int) -> Unit) {
         if(size == 0)
             return
 
@@ -195,7 +198,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
         }
     }
 
-    fun getBounds(vertexID:Int = 0, matrix:Matrix3? = null, count:Int = -1, result:Rectangle? = null):Rectangle {
+    fun getBounds(vertexID:Int = 0, matrix:Matrix3? = null, count:Int = size - vertexID, result:Rectangle? = null):Rectangle {
         val out = result ?: Rectangle()
 
         val numVertices = if(count < 0 || vertexID + count > size) size - vertexID else count
