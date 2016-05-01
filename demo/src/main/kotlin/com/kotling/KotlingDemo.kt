@@ -56,7 +56,7 @@ class KotlingDemo : ApplicationAdapter() {
         texturedRenderer.render()
     }
 
-    class ColoredRenderer: Renderer() {
+    class ColoredRenderer : Renderer() {
         @Shader("core/shaders/Colored")
         override val shader:ShaderProgram by ShaderProgramCache
 
@@ -64,7 +64,7 @@ class KotlingDemo : ApplicationAdapter() {
         override val attributes:VertexAttributes by VertexAttributesCache
     }
 
-    class TexturedRenderer: Renderer() {
+    class TexturedRenderer : Renderer() {
         @Shader("core/shaders/Textured")
         override val shader:ShaderProgram by ShaderProgramCache
 

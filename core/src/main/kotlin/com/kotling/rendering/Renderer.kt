@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.utils.Disposable
 
-abstract class Renderer(initialMaxVertexCount:Int = Renderer.MIN_VERTICES, initialMaxIndexCount:Int = Renderer.MIN_INDICES) :Disposable {
+abstract class Renderer : Disposable {
     companion object {
         const val MIN_VERTICES:Int  = 32
         const val MIN_INDICES:Int   = 48
@@ -19,23 +19,26 @@ abstract class Renderer(initialMaxVertexCount:Int = Renderer.MIN_VERTICES, initi
     var projection = Matrix4()
         set(value) { field.set(value) }
 
-    protected val mesh by lazy { Mesh(true, true, initialMaxVertexCount, initialMaxIndexCount, attributes) }
+    protected var mesh:Mesh? = null
 
     /**
      * By default it does NOT dispose shader. Mesh is disposed however.
      */
     override fun dispose() {
-        mesh.dispose();
+        mesh?.dispose();
     }
 
     fun upload(vertices:Vertices, indices:Indices, vertexID:Int = 0, vertexCount:Int = vertices.size, indexID:Int = 0, indexCount:Int = indices.size) {
-        mesh.setVertices(vertices.rawData, vertexID * vertices.componentCount, vertexCount * vertices.componentCount)
-        mesh.setIndices(indices.rawData, indexID, indexCount)
+        if(mesh?.maxVertices ?: -1 < vertexCount || mesh?.maxIndices ?: -1 < indexCount)
+            mesh = Mesh(true, true, Math.max(vertexCount, MIN_VERTICES), Math.max(indexCount, MIN_INDICES), attributes)
+
+        mesh?.setVertices(vertices.rawData, vertexID * vertices.componentCount, vertexCount * vertices.componentCount)
+        mesh?.setIndices(indices.rawData, indexID, indexCount)
     }
 
-    fun render(firstIndexID:Int = 0, indexCount:Int = mesh.numIndices - firstIndexID) {
+    fun render(firstIndexID:Int = 0, indexCount:Int = mesh?.numIndices ?: -1 - firstIndexID) {
         beforeDraw()
-        mesh.render(shader, GL20.GL_TRIANGLE_STRIP, firstIndexID, indexCount, true)
+        mesh?.render(shader, GL20.GL_TRIANGLE_STRIP, firstIndexID, indexCount, true)
         afterDraw()
     }
 
