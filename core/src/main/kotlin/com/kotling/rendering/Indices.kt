@@ -117,7 +117,7 @@ class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Sh
         var clone = Indices(rawData.size)
         clone.size = size
 
-        for(i in 0..size)
+        for(i in 0..size - 1)
             clone.rawData[i] = rawData[i]
 
         return clone
