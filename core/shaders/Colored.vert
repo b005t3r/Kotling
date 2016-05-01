@@ -1,5 +1,9 @@
 #version 120
 
+#ifdef GL_ES
+precision mediump float;
+#endif
+
 //our attributes
 attribute vec2 position;
 attribute vec4 color;
@@ -11,6 +15,6 @@ uniform mat4 projection;
 varying vec4 vColor;
 
 void main() {
-    vColor      = colorl;
+    vColor      = color;
     gl_Position = projection * vec4(position.xy, 0.0, 1.0);
 }

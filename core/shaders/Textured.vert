@@ -1,5 +1,9 @@
 #version 120
 
+#ifdef GL_ES
+precision mediump float;
+#endif
+
 //our attributes
 attribute vec2 position;
 attribute vec4 color;
