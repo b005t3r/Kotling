@@ -3,13 +3,14 @@ package com.kotling.rendering
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.math.Matrix3
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.kotling.util.Pool
 import com.kotling.util.poolable.use
 import com.kotling.util.set
 
-class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
+class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACITY) : Cloneable {
     companion object {
         const val MIN_CAPACITY:Int = 4
     }
@@ -59,7 +60,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
     var size = 0
         private set
 
-    var rawData = FloatArray(Math.max(MIN_CAPACITY, initialCapacity * componentCount))
+    var rawData = FloatArray(Math.max(MIN_CAPACITY, initialCapacity) * componentCount)
         private set
 
     fun clear(trim:Boolean = false) {
@@ -150,12 +151,10 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
 
         target.ensureCapacity(newSize)
 
-        var attrsWithIndices = attributes.withIndex()
-
         var srcOffset = vertexID * componentCount
         var dstOffset = targetVertexID * componentCount
         for(i in 0..newSize - 1) {
-            for((attrID, attr) in attrsWithIndices) {
+            for((attrID, attr) in attributes.withIndex()) {
                 if(attr.usage == VertexAttributes.Usage.ColorPacked) {
                     block(vertexID + i, targetVertexID + i, attrID, rawData, srcOffset, target.rawData, dstOffset, 1)
                     ++srcOffset
@@ -168,6 +167,98 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
                 }
             }
         }
+
+        target.size = newSize
+    }
+
+    fun forEach(vertexID:Int = 0, count:Int = -1, block : (vertexID:Int, attrID:Int, src:FloatArray, srcOffset:Int, count:Int) -> Unit) {
+        if(size == 0)
+            return
+
+        if(vertexID !in 0..size - 1)
+            throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
+
+        val numVertices = if(count < 0 || vertexID + count > size) size - vertexID else count
+
+        var srcOffset = vertexID * componentCount
+        for(i in 0..numVertices - 1) {
+            for((attrID, attr) in attributes.withIndex()) {
+                if(attr.usage == VertexAttributes.Usage.ColorPacked) {
+                    block(vertexID + i, attrID, rawData, srcOffset, 1)
+                    ++srcOffset
+                }
+                else {
+                    block(vertexID + i, attrID, rawData, srcOffset, attr.numComponents)
+                    srcOffset += attr.numComponents
+                }
+            }
+        }
+    }
+
+    fun getBounds(vertexID:Int = 0, matrix:Matrix3? = null, count:Int = -1, result:Rectangle? = null):Rectangle {
+        val out = result ?: Rectangle()
+
+        val numVertices = if(count < 0 || vertexID + count > size) size - vertexID else count
+
+        if(numVertices == 0) {
+            if(matrix == null)
+                return out.set(0f, 0f, 0f, 0f)
+
+            Pool.Vector2.use {
+                it.set(0f, 0f).mul(matrix)
+                return out.setPosition(it).setSize(0f, 0f)
+            }
+        }
+
+        var minX = Float.MAX_VALUE
+        var maxX = Float.MIN_VALUE
+        var minY = Float.MAX_VALUE
+        var maxY = Float.MIN_VALUE
+
+        var srcOffset = vertexID * componentCount
+
+        if(matrix == null) {
+            for(i in 0..numVertices - 1) {
+                for(attr in attributes) {
+                    if(attr.usage == VertexAttributes.Usage.Position) {
+                        minX = Math.min(minX, rawData[srcOffset])
+                        minY = Math.min(minY, rawData[srcOffset + 1])
+                        maxX = Math.max(maxX, rawData[srcOffset])
+                        maxY = Math.max(maxY, rawData[srcOffset + 1])
+                    }
+
+                    if(attr.usage == VertexAttributes.Usage.ColorPacked)
+                        ++srcOffset
+                    else
+                        srcOffset += attr.numComponents
+                }
+            }
+        }
+        else {
+            Pool.Vector2.use {
+                for(i in 0..numVertices - 1) {
+                    for(attr in attributes) {
+                        if(attr.usage == VertexAttributes.Usage.Position) {
+                            it.set(rawData[srcOffset], rawData[srcOffset + 1])
+
+                            it.mul(matrix)
+
+                            minX = Math.min(minX, it.x)
+                            minY = Math.min(minY, it.y)
+                            maxX = Math.max(maxX, it.x)
+                            maxY = Math.max(maxY, it.y)
+                        }
+
+                        if(attr.usage == VertexAttributes.Usage.ColorPacked)
+                            ++srcOffset
+                        else
+                            srcOffset += attr.numComponents
+                    }
+                }
+            }
+        }
+
+        return out.set(minX, minY, maxX - minX, maxY - minY)
     }
 
     fun add():Vertices = ensureCapacity(++size)
@@ -247,6 +338,10 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
         return this
     }
 
+    /**
+     * Because of how values are packed internally, alpha 0x00 and alpha 0x01 are both treated as 0x00.
+     * Other alpha values are unaffected.
+     */
     fun set(vertexID:Int, offset:Int, c:Color):Vertices {
         if(vertexID !in 0..size - 1)
             throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
@@ -302,6 +397,9 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
         return out
     }
 
+    /**
+     * @see set
+     */
     fun get(vertexID:Int, offset:Int, result:Color? = null):Color {
         if(vertexID !in 0..size - 1)
             throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
@@ -311,5 +409,37 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = 32) {
         val totalOffset = vertexID * componentCount + offset
 
         return out.set(rawData[totalOffset])
+    }
+
+    override fun toString():String = "size: $size, rawData: $rawData"
+
+    override fun hashCode():Int {
+        var hash = size.hashCode();
+
+        for(i in 0..size - 1)
+            hash = hash xor rawData[i].hashCode()
+
+        return hash
+    }
+
+    override fun equals(other:Any?):Boolean {
+        if(other !is Vertices || size != other.size)
+            return false
+
+        for(i in 0..size - 1)
+            if(rawData[i] != other.rawData[i])
+                return false
+
+        return true
+    }
+
+    override public fun clone():Any {
+        var clone = Vertices(attributes, size)
+        clone.size = size
+
+        for(i in 0..size - 1)
+            clone.rawData[i] = rawData[i]
+
+        return clone
     }
 }
