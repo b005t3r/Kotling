@@ -8,4 +8,4 @@ import org.junit.runners.Suite
 
 @RunWith(Suite::class)
 @Suite.SuiteClasses(DisplayTest::class, ContainerChildrenTest::class, ContainerBoundsTest::class)
-class DisplaySuite {}
+class DisplaySuite
