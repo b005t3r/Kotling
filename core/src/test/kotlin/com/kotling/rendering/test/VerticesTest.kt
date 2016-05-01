@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.kotling.display.test.assertRectEquals
+import com.kotling.rendering.Indices
 import com.kotling.rendering.VertexAttributesCache
 import com.kotling.rendering.VertexFormat
 import com.kotling.rendering.Vertices
@@ -171,5 +172,26 @@ class VerticesTest {
         transform.scale(scaleX, scaleY)
 
         assertRectEquals(Rectangle(x * scaleX + dx, y * scaleY + dy, w * scaleX, h * scaleY), buffer.getBounds(0, transform))
+    }
+
+    @Test fun testTriangulate() {
+        assertEquals(0, buffer.size)
+
+        val x = 1f
+        val y = 1f
+        val w = 10f
+        val h = 10f
+
+        // vertices are created in the clockwise order
+        buffer.add(4).
+        set(0, 0, x, y).set(0, 2, Color.WHITE).set(0, 3, Vector2(0f, 0f)).
+        set(1, 0, x + w, y).set(1, 2, Color.RED).set(1, 3, Vector2(1f, 0f)).
+        set(2, 0, x + w, y + h).set(2, 2, Color.BLUE).set(2, 3, Vector2(1f, 1f)).
+        set(3, 0, x, y + h).set(3, 2, Color.GREEN).set(3, 3, Vector2(0f, 1f));
+
+        assertEquals(4, buffer.size)
+
+        println(Indices.triangulate(buffer))
+        println(buffer)
     }
 }

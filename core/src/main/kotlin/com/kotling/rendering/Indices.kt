@@ -1,14 +1,62 @@
 package com.kotling.rendering
 
+import com.badlogic.gdx.graphics.VertexAttributes
+import com.badlogic.gdx.math.EarClippingTriangulator
+
 class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Short>, Cloneable {
-    companion object {
-        const val MIN_CAPACITY:Int = 48
+    private object Triangulator : EarClippingTriangulator() {
+    //private object Triangulator : DelaunayTriangulator() {
+        private var tempBuffer:FloatArray = FloatArray(MIN_CAPACITY * 2) { i -> Float.NaN }
+
+        fun computeTriangles(vertices:Vertices, vertexID:Int = 0, count:Int = -1):com.badlogic.gdx.utils.ShortArray {
+            if(vertexID !in 0..vertices.size - 1)
+                throw IllegalArgumentException("vertexID $vertexID outside of vertices bounds 0..${vertices.size - 1}")
+
+            val numVertices = if(count < 0 || vertexID + count > vertices.size) vertices.size - vertexID else count
+
+            ensureCapacity(numVertices * 2)
+
+            val dst = tempBuffer
+            var dstOffset = 0
+
+            vertices.forEach(vertexID, numVertices) { vertexID, attrID, src, srcOffset, count ->
+                if(vertices.attributes[attrID].usage == VertexAttributes.Usage.Position) {
+                    dst[dstOffset++] = src[srcOffset]
+                    dst[dstOffset++] = src[srcOffset + 1]
+                }
+            }
+
+            return computeTriangles(dst, 0, dstOffset)
+        }
+
+        private fun ensureCapacity(newCapacity:Int) {
+            if(tempBuffer.size >= newCapacity)
+                return
+
+            val newSize = ((newCapacity / MIN_CAPACITY) + 1) * MIN_CAPACITY
+            tempBuffer = FloatArray(newSize) { i -> if(i < tempBuffer.size) tempBuffer[i] else Float.NaN }
+        }
     }
-    
+
+    companion object {
+        const val MIN_CAPACITY:Int = 16
+
+        fun triangulate(vertices:Vertices, vertexID:Int = 0, count:Int = -1):Indices {
+            val triangles = Triangulator.computeTriangles(vertices, vertexID, count)
+            val indices = Indices(triangles.size)
+
+
+            for(i in 0..triangles.size - 1)
+                indices.add(triangles[i])
+
+            return indices
+        }
+    }
+
     var size = 0
         private set
 
-    var rawData = ShortArray(Math.max(MIN_CAPACITY, initialCapacity))
+    var rawData = ShortArray(Math.max(MIN_CAPACITY, initialCapacity)) { i -> -1 }
         private set
 
     fun clear(trim:Boolean = false) {
@@ -28,7 +76,7 @@ class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Sh
             return this
 
         val newSize = ((newCapacity / MIN_CAPACITY) + 1) * MIN_CAPACITY
-        rawData = ShortArray(newSize, { i -> if(i < rawData.size) rawData[i] else -1 });
+        rawData = ShortArray(newSize) { i -> if(i < rawData.size) rawData[i] else -1 }
 
         return this
     }
@@ -91,7 +139,7 @@ class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Sh
         return this
     }
 
-    override fun toString():String = "size: $size, rawData: $rawData"
+    override fun toString():String = "size: $size, rawData: ${rawData.joinToString(", ", "[", "]", 128)}"
 
     override fun hashCode():Int {
         var hash = size.hashCode();

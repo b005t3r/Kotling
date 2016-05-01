@@ -60,7 +60,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
     var size = 0
         private set
 
-    var rawData = FloatArray(Math.max(MIN_CAPACITY, initialCapacity) * componentCount)
+    var rawData = FloatArray(Math.max(MIN_CAPACITY, initialCapacity) * componentCount) { i -> Float.NaN }
         private set
 
     fun clear(trim:Boolean = false) {
@@ -80,7 +80,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
             return this
 
         val newSize = ((newCapacity / MIN_CAPACITY) + 1) * MIN_CAPACITY * componentCount
-        rawData = FloatArray(newSize, { i -> if(i < rawData.size) rawData[i] else Float.NaN });
+        rawData = FloatArray(newSize) { i -> if(i < rawData.size) rawData[i] else Float.NaN }
 
         return this
     }
@@ -411,7 +411,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
         return out.set(rawData[totalOffset])
     }
 
-    override fun toString():String = "size: $size, rawData: $rawData"
+    override fun toString():String = "attributes: $attributes, componentCount: $componentCount, size: $size, rawData: ${rawData.joinToString(", ", "[", "]", 128)}".replace(")\n]", ")]").replace("\n", ", ")
 
     override fun hashCode():Int {
         var hash = size.hashCode();
