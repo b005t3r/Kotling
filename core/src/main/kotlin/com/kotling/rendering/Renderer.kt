@@ -51,7 +51,7 @@ abstract class Renderer : Disposable {
     }
 }
 
-class ColoredRenderer() : Renderer() {
+open class ColoredRenderer() : Renderer() {
     @Shader("core/shaders/Colored")
     override val shader:ShaderProgram by ShaderProgramCache
 
@@ -68,7 +68,7 @@ class ColoredRenderer() : Renderer() {
     }
 }
 
-class TexturedRenderer() : Renderer() {
+open class TexturedRenderer() : Renderer() {
     @Shader("core/shaders/Textured")
     override val shader:ShaderProgram by ShaderProgramCache
 

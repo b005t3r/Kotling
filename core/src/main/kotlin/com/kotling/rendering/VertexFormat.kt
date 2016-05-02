@@ -43,14 +43,17 @@ object VertexAttributesCache {
                 val parts = format[i].split(":")
                 val name = parts[0]
                 val type = parts[1]
-                val usage = getUsage(name)
+                val usage = getUsage(name, type)
 
                 if(! hasPosition && usage == VertexAttributes.Usage.Position)
                     hasPosition = true
 
                 return when {
                     usage == VertexAttributes.Usage.ColorPacked && type != "byte4" ->
-                        throw IllegalArgumentException("invalid type for $name: colors have to use 'byte4' type")
+                        throw IllegalArgumentException("invalid type for $name: packed colors have to use 'byte4' type")
+
+                    usage == VertexAttributes.Usage.ColorUnpacked && type != "float4" ->
+                        throw IllegalArgumentException("invalid type for $name: unpacked colors have to use 'float4' type")
 
                     usage == VertexAttributes.Usage.TextureCoordinates && type != "float2" ->
                         throw IllegalArgumentException("invalid type for $name: texture coordinates have to use 'float2' type")
@@ -69,9 +72,10 @@ object VertexAttributesCache {
         return VertexAttributes(*attrs)
     }
 
-    private fun getUsage(name:String):Int = when {
+    private fun getUsage(name:String, type:String):Int = when {
         name.contains("position", true) -> VertexAttributes.Usage.Position
-        name.contains("color", true) -> VertexAttributes.Usage.ColorPacked // ColorUnpacked is never used!
+        name.contains("color", true) && type == "byte4" -> VertexAttributes.Usage.ColorPacked
+        name.contains("color", true) && type == "float4" -> VertexAttributes.Usage.ColorUnpacked
         name.contains("uv", true) || name.contains("texCoord", true) -> VertexAttributes.Usage.TextureCoordinates
         else -> VertexAttributes.Usage.Generic
     }

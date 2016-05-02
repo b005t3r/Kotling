@@ -8,7 +8,10 @@ import com.kotling.rendering.*
 
 class KotlingDemo : ApplicationAdapter() {
     val coloredRenderer     = ColoredRenderer()
-    val texturedRenderer    = TexturedRenderer()
+    val texturedRenderer    = object : TexturedRenderer() {
+        @VertexFormat("position:float2", "color:float4", "texCoords:float2")
+        override val attributes:VertexAttributes by VertexAttributesCache
+    }
 
     lateinit var coloredVertices:Vertices
     lateinit var texturedVertices:Vertices
@@ -18,6 +21,7 @@ class KotlingDemo : ApplicationAdapter() {
 
     override fun create() {
         coloredRenderer.globalColor = Color.FOREST
+
         texturedRenderer.globalColor = Color.CORAL
         texturedRenderer.globalColor.a = 0.6f
 
@@ -35,10 +39,10 @@ class KotlingDemo : ApplicationAdapter() {
 
         texturedVertices = Vertices(texturedRenderer.attributes).
                 add(4).
-                set(0, 0, x + 200, y).set(0, 2, Color.WHITE).set(0, 3, 0f, 0f).
-                set(1, 0, x + 200 + w, y).set(1, 2, Color.RED).set(1, 3, 1f, 0f).
-                set(2, 0, x + 200 + w, y + h).set(2, 2, Color.BLUE).set(2, 3, 1f, 1f).
-                set(3, 0, x + 200, y + h).set(3, 2, Color.GREEN).set(3, 3, 0f, 1f)
+                set(0, 0, x + 200, y).set(0, 2, Color.WHITE, false).set(0, 6, 0f, 0f).
+                set(1, 0, x + 200 + w, y).set(1, 2, Color.RED, false).set(1, 6, 1f, 0f).
+                set(2, 0, x + 200 + w, y + h).set(2, 2, Color.BLUE, false).set(2, 6, 1f, 1f).
+                set(3, 0, x + 200, y + h).set(3, 2, Color.GREEN, false).set(3, 6, 0f, 1f)
 
         texturedRenderer.texture = Texture("demo/assets/badlogic.jpg")
 
@@ -62,6 +66,4 @@ class KotlingDemo : ApplicationAdapter() {
         texturedRenderer.upload(texturedVertices, indices)
         texturedRenderer.render()
     }
-
-
 }

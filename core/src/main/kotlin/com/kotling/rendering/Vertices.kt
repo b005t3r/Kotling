@@ -345,12 +345,20 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
      * Because of how values are packed internally, alpha 0x00 and alpha 0x01 are both treated as 0x00.
      * Other alpha values are unaffected.
      */
-    fun set(vertexID:Int, offset:Int, c:Color):Vertices {
+    fun set(vertexID:Int, offset:Int, c:Color, packed:Boolean = true):Vertices {
         if(vertexID !in 0..size - 1)
             throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
 
         val totalOffset = vertexID * componentCount + offset
-        rawData[totalOffset] = c.toFloatBits()
+        if(packed) {
+            rawData[totalOffset] = c.toFloatBits()
+        }
+        else {
+            rawData[totalOffset]        = c.r
+            rawData[totalOffset + 1]    = c.g
+            rawData[totalOffset + 2]    = c.b
+            rawData[totalOffset + 3]    = c.a
+        }
 
         return this
     }
