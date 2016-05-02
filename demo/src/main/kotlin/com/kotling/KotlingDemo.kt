@@ -17,6 +17,10 @@ class KotlingDemo : ApplicationAdapter() {
     val camera = OrthographicCamera()
 
     override fun create() {
+        coloredRenderer.globalColor = Color.FOREST
+        texturedRenderer.globalColor = Color.CORAL
+        texturedRenderer.globalColor.a = 0.6f
+
         val x = 50f
         val y = 50f
         val w = 180f
@@ -26,8 +30,8 @@ class KotlingDemo : ApplicationAdapter() {
                 add(4).
                 set(0, 0, x, y).set(0, 2, Color.WHITE).
                 set(1, 0, x + w, y).set(1, 2, Color.RED).
-                set(2, 0, x + w, y + h).set(2, 2, Color.BLUE).
-                set(3, 0, x, y + h).set(3, 2, Color.GREEN)
+                set(2, 0, x + w, y + h).set(2, 2, Color.GREEN).
+                set(3, 0, x, y + h).set(3, 2, Color.BLUE)
 
         texturedVertices = Vertices(texturedRenderer.attributes).
                 add(4).
@@ -42,8 +46,11 @@ class KotlingDemo : ApplicationAdapter() {
     }
 
     override fun render() {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
+        Gdx.gl.glClearColor(0f, 0f, 0f, 0f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
+        Gdx.gl.glEnable(GL20.GL_BLEND)
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
 
         camera.setToOrtho(true, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
 
@@ -56,29 +63,5 @@ class KotlingDemo : ApplicationAdapter() {
         texturedRenderer.render()
     }
 
-    class ColoredRenderer : Renderer() {
-        @Shader("core/shaders/Colored")
-        override val shader:ShaderProgram by ShaderProgramCache
 
-        @VertexFormat("position:float2", "color:byte4")
-        override val attributes:VertexAttributes by VertexAttributesCache
-    }
-
-    class TexturedRenderer : Renderer() {
-        @Shader("core/shaders/Textured")
-        override val shader:ShaderProgram by ShaderProgramCache
-
-        @VertexFormat("position:float2", "color:byte4", "texCoords:float2")
-        override val attributes:VertexAttributes by VertexAttributesCache
-
-        lateinit var texture:Texture
-
-        override fun beforeDraw() {
-            super.beforeDraw()
-
-            Gdx.graphics.gL20.glActiveTexture(GL20.GL_TEXTURE0)
-            texture.bind(0)
-            shader.setUniformi("texture", 0)
-        }
-    }
 }

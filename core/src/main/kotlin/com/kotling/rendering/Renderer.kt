@@ -1,8 +1,7 @@
 package com.kotling.rendering
 
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Mesh
-import com.badlogic.gdx.graphics.VertexAttributes
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.utils.Disposable
@@ -49,5 +48,45 @@ abstract class Renderer : Disposable {
 
     open protected fun afterDraw() {
         shader.end()
+    }
+}
+
+class ColoredRenderer() : Renderer() {
+    @Shader("core/shaders/Colored")
+    override val shader:ShaderProgram by ShaderProgramCache
+
+    @VertexFormat("position:float2", "color:byte4")
+    override val attributes:VertexAttributes by VertexAttributesCache
+
+    var globalColor = Color.WHITE.cpy()
+        set(value) { field.set(value) }
+
+    override fun beforeDraw() {
+        super.beforeDraw()
+
+        shader.setUniformf("globalColor", globalColor)
+    }
+}
+
+class TexturedRenderer() : Renderer() {
+    @Shader("core/shaders/Textured")
+    override val shader:ShaderProgram by ShaderProgramCache
+
+    @VertexFormat("position:float2", "color:byte4", "texCoords:float2")
+    override val attributes:VertexAttributes by VertexAttributesCache
+
+    var globalColor = Color.WHITE.cpy()
+        set(value) { field.set(value) }
+
+    lateinit var texture:Texture
+
+    override fun beforeDraw() {
+        super.beforeDraw()
+
+        shader.setUniformf("globalColor", globalColor)
+
+        Gdx.graphics.gL20.glActiveTexture(GL20.GL_TEXTURE0)
+        texture.bind()
+        shader.setUniformi("texture", 0)
     }
 }
