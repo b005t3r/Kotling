@@ -21,7 +21,10 @@ abstract class Style : Cloneable {
     val vertices = mesh?.vertices ?: throw IllegalStateException("mesh not set")
     val indices = mesh?.vertices ?: throw IllegalStateException("mesh not set")
 
-    open fun copyFrom(style:Style) {
+    open fun set(style:Style) {
+        if(! javaClass.isInstance(style))
+            throw IllegalArgumentException("$style is not an instance of $javaClass")
+
         mesh = style.mesh
     }
 
