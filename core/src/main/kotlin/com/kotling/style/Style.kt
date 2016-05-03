@@ -4,12 +4,14 @@ import com.badlogic.gdx.graphics.VertexAttributes
 import com.kotling.display.MeshDisplay
 import com.kotling.rendering.RenderState
 import com.kotling.rendering.Renderer
+import com.kotling.style.factory.DefaultStyleFactory
+import com.kotling.style.factory.StyleFactory
 
 abstract class Style : Cloneable {
     companion object {
-        fun createStyleForVertexAttributes(attrs:VertexAttributes):Style {
-            throw UnsupportedOperationException("not yet implemented");
-        }
+        val styleFactory:StyleFactory = DefaultStyleFactory()
+
+        fun createStyle(attrs:VertexAttributes):Style = styleFactory.createStyle(attrs)
     }
 
     abstract val attributes:VertexAttributes

@@ -8,7 +8,7 @@ import com.kotling.rendering.Vertices
 import com.kotling.style.Style
 
 class MeshDisplay(val vertices:Vertices, val indices:Indices, val style:Style) : Display() {
-    constructor(vertices:Vertices, indices:Indices) : this(vertices, indices, Style.createStyleForVertexAttributes(vertices.attributes))
+    constructor(vertices:Vertices, indices:Indices) : this(vertices, indices, Style.createStyle(vertices.attributes))
 
     var meshAttributes = mutableListOf<MeshAttribute>()
 
