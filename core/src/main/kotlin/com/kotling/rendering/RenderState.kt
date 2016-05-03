@@ -1,6 +1,7 @@
 package com.kotling.rendering
 
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
@@ -10,7 +11,9 @@ import com.kotling.display.BlendMode
 import kotlin.reflect.primaryConstructor
 
 class RenderState : Pool.Poolable {
-    var alpha                       = 1f
+    var color                       = Color.WHITE.cpy()
+        set(value) { field.set(value) }
+
     var blendMode                   = BlendMode.NORMAL
         set(value) {
             //TODO: onDrawRequiredEvent
@@ -34,7 +37,7 @@ class RenderState : Pool.Poolable {
     var camera:Camera               = OrthographicCamera()
 
     override fun reset() {
-        alpha               = 1f
+        color               = Color.WHITE
         blendMode           = BlendMode.NORMAL
         renderTarget        = null;
         clipRect            = null;
@@ -64,7 +67,7 @@ class RenderState : Pool.Poolable {
 
         // TODO: onDrawRequiredEvent
 
-        alpha               = renderState.alpha
+        color               = renderState.color
         blendMode           = renderState.blendMode
         renderTarget        = renderState.renderTarget;
         clipRect            = if(renderState.clipRect == null) null else Rectangle(renderState.clipRect)
