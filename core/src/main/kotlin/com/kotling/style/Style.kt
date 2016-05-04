@@ -7,7 +7,7 @@ import com.kotling.rendering.Renderer
 import com.kotling.style.factory.DefaultStyleFactory
 import com.kotling.style.factory.StyleFactory
 
-abstract class Style : Cloneable {
+abstract class Style {
     companion object {
         val styleFactory:StyleFactory = DefaultStyleFactory()
 
@@ -28,6 +28,7 @@ abstract class Style : Cloneable {
         mesh = style.mesh
     }
 
+    abstract fun copy(mesh:MeshDisplay? = this.mesh):Style
     abstract fun canBatchWith(style:Style):Boolean
     abstract fun createRenderer():Renderer
     abstract fun updateRenderer(renderer : Renderer, renderState:RenderState)

@@ -27,6 +27,14 @@ class TexturedStyle : Style() {
     @VertexFormat("position:float2", "color:byte4", "texCoords:float2")
     override val attributes:VertexAttributes by VertexAttributesCache
 
+    override fun copy(mesh:MeshDisplay?):Style {
+        val style = TexturedStyle()
+        style.mesh = mesh
+        style.texture = texture
+
+        return style
+    }
+
     override fun canBatchWith(style:Style):Boolean {
         if(style !is TexturedStyle)
             return false
@@ -38,7 +46,6 @@ class TexturedStyle : Style() {
     }
 
     override fun createRenderer():Renderer = TexturedRenderer()
-
     override fun updateRenderer(renderer:Renderer, renderState:RenderState) {
         if(renderer !is TexturedRenderer)
             throw IllegalArgumentException("unhandled renderer type: $renderer")
