@@ -17,6 +17,18 @@ abstract class Style {
     abstract val attributes:VertexAttributes
 
     open var mesh:MeshDisplay? = null
+        set(value) {
+            if(value == null) {
+                field = null
+            }
+            else {
+                if(value.vertices.attributes == attributes)
+                    throw IllegalArgumentException("mesh's vertex attributes (${value.vertices.attributes.toString().replace(")\n]", ")]").replace("\n", ", ")}) don't match style's vertex attributes (${attributes.toString().replace(")\n]", ")]").replace("\n", ", ")})")
+
+                field = value
+            }
+        }
+
     var requiresRedraw:Boolean
         get() = mesh?.requiresRedraw ?: throw IllegalStateException("mesh not set")
         internal set(value) { mesh?.requiresRedraw = value }
