@@ -1,3 +1,3 @@
 package com.kotling.display.mesh
 
-interface MeshAttribute
+interface DisplayAttribute

@@ -3,25 +3,18 @@ package com.kotling.style
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.kotling.display.MeshDisplay
-import com.kotling.display.mesh.TexturesMeshAttribute
+import com.kotling.display.mesh.textures
 import com.kotling.rendering.*
 
 class TexturedStyle : Style() {
     var texture:Texture? = null
+        protected set
 
     override var mesh:MeshDisplay? = null
-        get() = super.mesh
         set(value) {
             super.mesh = value
 
-            if(field == null) {
-                texture = null
-            }
-            else {
-                val textureAttr = field?.meshAttributes?.find { it is TexturesMeshAttribute } as? TexturesMeshAttribute ?: throw IllegalStateException("no TexturedMeshAttribute for MeshDisplay: $field (attributes: ${field?.meshAttributes}")
-
-                texture = textureAttr.textures[0]
-            }
+            texture = value?.textures?.get(0)
         }
 
     @VertexFormat("position:float2", "color:byte4", "texCoords:float2")

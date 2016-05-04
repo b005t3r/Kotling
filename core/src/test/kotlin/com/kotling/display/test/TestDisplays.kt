@@ -3,6 +3,7 @@ package com.kotling.display.test
 import com.badlogic.gdx.math.Rectangle
 import com.kotling.display.Container
 import com.kotling.display.Display
+import com.kotling.display.mesh.name
 import com.kotling.util.poolable.use
 import com.kotling.rendering.Painter
 import com.kotling.util.Pool

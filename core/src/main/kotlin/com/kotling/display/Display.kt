@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.Pools
+import com.kotling.display.mesh.DisplayAttribute
 import com.kotling.util.poolable.PoolableMatrix3
 import com.kotling.util.poolable.PoolableRectangle
 import com.kotling.util.poolable.PoolableVector2
@@ -59,8 +60,6 @@ abstract class Display : Disposable {
 
     val base:Display get() = parent?.base ?: this
     val stage:Stage? get() = base as? Stage
-
-    var name = ""
 
     var x = 0f
         set(value) {
@@ -269,6 +268,9 @@ abstract class Display : Disposable {
 
     var orientationChanged = true
         internal set
+
+    var attributes = mutableListOf<DisplayAttribute>()
+
 
     override fun dispose() {
     }
