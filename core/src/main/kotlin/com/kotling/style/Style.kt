@@ -17,6 +17,9 @@ abstract class Style {
     abstract val attributes:VertexAttributes
 
     open var mesh:MeshDisplay? = null
+    var requiresRedraw:Boolean
+        get() = mesh?.requiresRedraw ?: throw IllegalStateException("mesh not set")
+        internal set(value) { mesh?.requiresRedraw = value }
 
     val vertices = mesh?.vertices ?: throw IllegalStateException("mesh not set")
     val indices = mesh?.vertices ?: throw IllegalStateException("mesh not set")
@@ -33,5 +36,4 @@ abstract class Style {
     abstract fun createRenderer():Renderer
     abstract fun updateRenderer(renderer : Renderer, renderState:RenderState)
 
-    protected fun setRequiresRedraw() { mesh?.requiresRedraw = true }
 }
