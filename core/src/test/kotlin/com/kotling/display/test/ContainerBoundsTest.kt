@@ -2,6 +2,7 @@ package com.kotling.display.test
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
+import com.kotling.assertRectEquals
 import com.kotling.display.Container
 import com.kotling.display.Display
 import junit.framework.Assert
@@ -202,17 +203,4 @@ class ContainerBoundsTest : TestCase() {
         //println(displayA.getBounds(displayE))
         //println(displayE.getBounds(displayA))
     }
-}
-
-@Suppress("DEPRECATION")
-fun assertRectEquals(rectA:Rectangle, rectB:Rectangle) {
-    if(! cmpRect(rectA, rectB))
-        Assert.failNotEquals(null, rectA, rectB)
-}
-
-fun cmpRect(rectA:Rectangle, rectB:Rectangle):Boolean {
-    return MathUtils.isEqual(rectA.x, rectB.x, DisplayTest.FLOAT_PRECISION)
-        && MathUtils.isEqual(rectA.y, rectB.y, DisplayTest.FLOAT_PRECISION)
-        && MathUtils.isEqual(rectA.width, rectB.width, DisplayTest.FLOAT_PRECISION)
-        && MathUtils.isEqual(rectA.height, rectB.height, DisplayTest.FLOAT_PRECISION);
 }

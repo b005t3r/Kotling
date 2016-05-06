@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
-import com.kotling.display.test.assertRectEquals
+import com.kotling.assertRectEquals
 import com.kotling.rendering.Indices
 import com.kotling.rendering.VertexAttributesCache
 import com.kotling.rendering.VertexFormat
