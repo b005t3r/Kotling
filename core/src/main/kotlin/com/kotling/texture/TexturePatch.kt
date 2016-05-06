@@ -4,18 +4,22 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.*
 
 class TexturePatch(
-        val texture:Texture,
-        val region:Rectangle,
-        val frame:Rectangle? = null,
-        val polygon:Polygon? = null,
-        val rotation:Rotation = TexturePatch.Rotation.NONE,
-        val scale:Float = 1f) {
+    val texture:Texture,
+    val region:Rectangle,
+    val frame:Rectangle? = null,
+    val polygon:Polygon? = null,
+    val transform:Transform = TexturePatch.Transform.NONE,
+    val scale:Float = 1f) {
 
-    enum class Rotation(val matrix:Matrix3) {
+    enum class Transform(val matrix:Matrix3) {
         NONE(Matrix3()),
         CLOCKWISE(Matrix3().translate(1f, 0f).rotateRad(MathUtils.PI * 0.5f)),
         COUNTERCLOCKWISE(Matrix3().translate(0f, 1f).rotateRad(MathUtils.PI * -0.5f)),
-        UPSIDE_DOWN(Matrix3().translate(1f, 1f).rotateRad(MathUtils.PI))
+        UPSIDE_DOWN(Matrix3().translate(1f, 1f).rotateRad(MathUtils.PI)),
+        HORIZONTAL_FLIP(Matrix3().translate(1f, 0f).scale(-1f, 1f)),
+        VERTICAL_FLIP(Matrix3().translate(0f, 1f).scale(1f, -1f)),
+        CLOCKWISE_FLIP(Matrix3().scale(-1f, 1f).rotateRad(MathUtils.PI * 0.5f)),
+        COUNTERCLOCKWISE_FLIP(Matrix3().translate(1f, 1f).scale(-1f, 1f).rotateRad(MathUtils.PI * -0.5f)),
     }
 
     var parent:TexturePatch? = null
@@ -31,7 +35,7 @@ class TexturePatch(
         transformationMatrix
             .translate(region.x / texture.width, region.y / texture.height)
             .scale(region.width / texture.width, region.height / texture.height)
-            .mul(rotation.matrix)
+            .mul(transform.matrix)
 
         rootTransformationMatrix.set(transformationMatrix)
 
@@ -39,15 +43,15 @@ class TexturePatch(
         maxUV.mul(transformationMatrix)
     }
 
-    constructor(patch:TexturePatch, region:Rectangle, frame:Rectangle? = null, polygon:Polygon? = null, rotation:Rotation = Rotation.NONE, scaleMultiplier:Float = 1f)
-    : this(patch.texture, region, frame, polygon, rotation, patch.scale * scaleMultiplier) {
+    constructor(patch:TexturePatch, region:Rectangle, frame:Rectangle? = null, polygon:Polygon? = null, transform:Transform = Transform.NONE, scaleMultiplier:Float = 1f)
+    : this(patch.texture, region, frame, polygon, transform, patch.scale * scaleMultiplier) {
         parent = patch
 
         transformationMatrix
             .idt()
             .translate(region.x / patch.region.width, region.y / patch.region.height)
             .scale(region.width / patch.region.width, region.height / patch.region.height)
-            .mul(rotation.matrix)
+            .mul(transform.matrix)
 
         rootTransformationMatrix.set(transformationMatrix)
 

@@ -43,7 +43,7 @@ class TexturePatchTest {
 
     @Test fun testRotatedClockwise() {
         var region = Rectangle(x, y, h, w)
-        val patch = TexturePatch(texture, region, rotation = TexturePatch.Rotation.CLOCKWISE)
+        val patch = TexturePatch(texture, region, transform = TexturePatch.Transform.CLOCKWISE)
         val minUV = Vector2(x / TEX_WIDTH + h / TEX_WIDTH, y / TEX_HEIGHT)
         val maxUV = Vector2().set(minUV).add(-h / TEX_WIDTH, w / TEX_HEIGHT)
 
@@ -55,7 +55,7 @@ class TexturePatchTest {
 
     @Test fun testRotatedCounterclockwise() {
         var region = Rectangle(x, y, h, w)
-        val patch = TexturePatch(texture, region, rotation = TexturePatch.Rotation.COUNTERCLOCKWISE)
+        val patch = TexturePatch(texture, region, transform = TexturePatch.Transform.COUNTERCLOCKWISE)
         val minUV = Vector2(x / TEX_WIDTH, y / TEX_HEIGHT + w / TEX_HEIGHT)
         val maxUV = Vector2().set(minUV).add(h / TEX_WIDTH, -w / TEX_HEIGHT)
 
@@ -67,9 +67,57 @@ class TexturePatchTest {
 
     @Test fun testRotatedUpsideDown() {
         var region = Rectangle(x, y, w, h)
-        val patch = TexturePatch(texture, region, rotation = TexturePatch.Rotation.UPSIDE_DOWN)
+        val patch = TexturePatch(texture, region, transform = TexturePatch.Transform.UPSIDE_DOWN)
         val maxUV = Vector2(x / TEX_WIDTH, y / TEX_HEIGHT)
         val minUV = Vector2().set(maxUV).add(w / TEX_WIDTH, h / TEX_HEIGHT)
+
+        assertRectEquals(region, patch.region)
+
+        assertVecEquals(minUV, patch.minUV)
+        assertVecEquals(maxUV, patch.maxUV)
+    }
+
+    @Test fun testHorizontalFlip() {
+        var region = Rectangle(x, y, w, h)
+        val patch = TexturePatch(texture, region, transform = TexturePatch.Transform.HORIZONTAL_FLIP)
+        val minUV = Vector2(x / TEX_WIDTH + w / TEX_WIDTH, y / TEX_HEIGHT)
+        val maxUV = Vector2().set(minUV).add(-w / TEX_WIDTH, h / TEX_HEIGHT)
+
+        assertRectEquals(region, patch.region)
+
+        assertVecEquals(minUV, patch.minUV)
+        assertVecEquals(maxUV, patch.maxUV)
+    }
+
+    @Test fun testVerticalFlip() {
+        var region = Rectangle(x, y, w, h)
+        val patch = TexturePatch(texture, region, transform = TexturePatch.Transform.VERTICAL_FLIP)
+        val minUV = Vector2(x / TEX_WIDTH, y / TEX_HEIGHT + h / TEX_HEIGHT)
+        val maxUV = Vector2().set(minUV).add(w / TEX_WIDTH, -h / TEX_HEIGHT)
+
+        assertRectEquals(region, patch.region)
+
+        assertVecEquals(minUV, patch.minUV)
+        assertVecEquals(maxUV, patch.maxUV)
+    }
+
+    @Test fun testRotatedClockwiseFlip() {
+        var region = Rectangle(x, y, h, w)
+        val patch = TexturePatch(texture, region, transform = TexturePatch.Transform.CLOCKWISE_FLIP)
+        val minUV = Vector2(x / TEX_WIDTH, y / TEX_HEIGHT)
+        val maxUV = Vector2().set(minUV).add(h / TEX_WIDTH, w / TEX_HEIGHT)
+
+        assertRectEquals(region, patch.region)
+
+        assertVecEquals(minUV, patch.minUV)
+        assertVecEquals(maxUV, patch.maxUV)
+    }
+
+    @Test fun testRotatedCounterclockwiseFlip() {
+        var region = Rectangle(x, y, h, w)
+        val patch = TexturePatch(texture, region, transform = TexturePatch.Transform.COUNTERCLOCKWISE_FLIP)
+        val minUV = Vector2(x / TEX_WIDTH + h / TEX_WIDTH, y / TEX_HEIGHT + w / TEX_HEIGHT)
+        val maxUV = Vector2().set(minUV).add(-h / TEX_WIDTH, -w / TEX_HEIGHT)
 
         assertRectEquals(region, patch.region)
 
