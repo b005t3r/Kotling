@@ -1,0 +1,14 @@
+{
+  "hash" : "{{smartUpdateKey}}",
+  "imagePath" : "{{texture.fullName}}",
+  "texturePatches" : [{% for sprite in allSprites %}
+    {
+      "name" : "{{sprite.trimmedName}}",
+      "rotated" : {% if sprite.rotated %}true{% else %}false{% endif %},
+      "region" : { "x" : {{sprite.frameRect.x}}, "y" : {{sprite.frameRect.y}}, "w" : {{sprite.frameRect.width}}, "h" : {{sprite.frameRect.height}} }{% if sprite.trimmed %},
+      "frame" : { "x" : -{{sprite.cornerOffset.x}}, "y" : -{{sprite.cornerOffset.y}}, "w" : {{sprite.untrimmedSize.width}}, "h" : {{sprite.untrimmedSize.height}} }{% endif %}{% if sprite.vertices %},
+      "vertices" : [ {% for v in sprite.vertices %}{{v.x}},{{v.y}}{% if not forloop.last %}, {% endif %}{% endfor %} ],
+      "indices" : [ {% for i in sprite.triangleIndices %}{{i}}{% if not forloop.last %}, {% endif %}{% endfor %} ]{% endif %}
+    }{% if not forloop.last %},{% endif %}{% endfor %}
+  ]
+}

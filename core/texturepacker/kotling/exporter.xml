@@ -1,0 +1,57 @@
+<exporter version="1.0">
+    <!-- identifier of the exporter -->
+    <name>com.kotling</name>
+	
+    <!-- display name of the exporter for the combo box -->
+    <displayName>Kotling</displayName>
+	
+    <!-- description of the exporter -->
+    <description>Exporter for Kotling</description>
+
+    <!-- exporter version -->
+    <version>1.0</version>
+	
+    <!-- currently only one file allowed - more to come with update -->
+    <files>
+        <file>
+            <!-- name of this file variable -->
+            <name>atlas</name>
+
+            <!-- human readable name (for GUI) -->
+            <displayName>Texture atlas</displayName>
+
+            <!-- file extension for the file -->
+            <fileExtension>json</fileExtension>
+
+            <!-- description what the file contains, used in tooltips in the GUI -->
+            <description>Texture atlas file for Kotling</description>
+
+            <!-- name of the template file -->
+            <template>atlas.json</template>
+        </file>
+    </files>
+
+    <!-- target framework supports trimming -->
+    <supportsTrimming>true</supportsTrimming>
+
+    <!-- target framework supports rotated sprites -->
+    <supportsRotation>true</supportsRotation>
+
+    <!-- rotated sprites direction (cw/ccw) -->
+    <rotationDirection>cw</rotationDirection>
+
+    <!-- supports npot sizes -->
+    <supportsNPOT>true</supportsNPOT>
+
+    <!-- supports file name stripping (remove .png etc) -->
+    <supportsTrimSpriteNames>yes</supportsTrimSpriteNames>
+
+    <!-- supports pivot point -->
+    <supportsPivotPoint>false</supportsPivotPoint>
+
+    <!-- supports texture subpath -->
+    <supportsTextureSubPath>yes</supportsTextureSubPath>
+
+    <!-- target framework supports rendering sprite with triangle list, not just rectangle-->
+    <supportsPolygonPacking>true</supportsPolygonPacking>
+</exporter>
