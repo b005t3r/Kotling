@@ -22,6 +22,10 @@ class PoolableColor : Color(), Pool.Poolable {
     override fun reset() { this.set(0.0f, 0.0f, 0.0f, 0.0f) }
 }
 
+class PoolableStringList(val l:MutableList<String> = mutableListOf()) : MutableList<String> by l, Pool.Poolable {
+    override fun reset() = l.clear()
+}
+
 inline fun <T : Pool.Poolable, R> T.use(pool:Pool<T>, block : (T) -> R): R {
     var freed = false
     try {
