@@ -1,11 +1,11 @@
 {
-  "hash" : "$TexturePacker:SmartUpdate:9b49679db1f0a75791a9ffebea4a7e5e:a45514f748dd3d1f64b7a7613c4089b7:cbce6b53f0f49e0bf15173c25c41f876$",
+  "hash" : "$TexturePacker:SmartUpdate:acf30373e69e67bc0dbb04db7d0f6cf7:a45514f748dd3d1f64b7a7613c4089b7:cbce6b53f0f49e0bf15173c25c41f876$",
   "imagePath" : "atlas.png",
   "texturePatches" : [
     {
       "name" : "rounded_square",
       "rotated" : false,
-      "region" : { "x" : 119, "y" : 11, "w" : 74, "h" : 74 },
+      "region" : { "x" : 121, "y" : 12, "w" : 74, "h" : 74 },
       "frame" : { "x" : -3, "y" : -3, "w" : 80, "h" : 80 },
       "vertices" : [ 77,77, 3,77, 3,3, 77,3 ],
       "indices" : [ 1, 2, 3, 0, 1, 3 ]
@@ -13,7 +13,7 @@
     {
       "name" : "star",
       "rotated" : false,
-      "region" : { "x" : 11, "y" : 11, "w" : 107, "h" : 102 },
+      "region" : { "x" : 12, "y" : 12, "w" : 107, "h" : 102 },
       "frame" : { "x" : -10, "y" : -5, "w" : 120, "h" : 120 },
       "vertices" : [ 84,36, 117,44, 96,74, 96,107, 64,94, 32,106, 31,66, 10,44, 46,38, 64,5 ],
       "indices" : [ 6, 7, 8, 4, 0, 2, 6, 4, 5, 6, 8, 4, 0, 4, 8, 4, 2, 3, 0, 1, 2, 0, 8, 9 ]
@@ -21,7 +21,7 @@
     {
       "name" : "sub/star",
       "rotated" : false,
-      "region" : { "x" : 11, "y" : 11, "w" : 107, "h" : 102 },
+      "region" : { "x" : 12, "y" : 12, "w" : 107, "h" : 102 },
       "frame" : { "x" : -10, "y" : -5, "w" : 120, "h" : 120 },
       "vertices" : [ 84,36, 117,44, 96,74, 96,107, 64,94, 32,106, 31,66, 10,44, 46,38, 64,5 ],
       "indices" : [ 6, 7, 8, 4, 0, 2, 6, 4, 5, 6, 8, 4, 0, 4, 8, 4, 2, 3, 0, 1, 2, 0, 8, 9 ]
@@ -29,7 +29,7 @@
     {
       "name" : "triangle",
       "rotated" : false,
-      "region" : { "x" : 11, "y" : 114, "w" : 90, "h" : 64 },
+      "region" : { "x" : 12, "y" : 116, "w" : 90, "h" : 64 },
       "frame" : { "x" : -7, "y" : -4, "w" : 100, "h" : 70 },
       "vertices" : [ 10,68, 7,67, 7,4, 97,4 ],
       "indices" : [ 0, 2, 3, 0, 1, 2 ]
@@ -37,7 +37,7 @@
     {
       "name" : "untrimmable_horizontal",
       "rotated" : false,
-      "region" : { "x" : 11, "y" : 1, "w" : 200, "h" : 10 },
+      "region" : { "x" : 12, "y" : 1, "w" : 200, "h" : 10 },
       "vertices" : [ 200,10, 0,10, 0,0, 200,0 ],
       "indices" : [ 1, 2, 3, 0, 1, 3 ]
     },
