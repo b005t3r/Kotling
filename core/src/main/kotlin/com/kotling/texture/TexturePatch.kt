@@ -2,6 +2,7 @@ package com.kotling.texture
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.*
+import com.badlogic.gdx.utils.Disposable
 import com.kotling.util.Pool
 import com.kotling.util.poolable.use
 
@@ -11,7 +12,7 @@ class TexturePatch(
     val frame:Rectangle = Rectangle().setPosition(0f, 0f).setSize(region.width, region.height),
     val polygon:Polygon? = null,
     val transform:Transform = TexturePatch.Transform.NONE,
-    val scale:Float = 1f) {
+    val scale:Float = 1f) : Disposable {
 
     enum class Transform(val matrix:Matrix3, val rotated:Boolean = false) {
         NONE(Matrix3()),
@@ -66,6 +67,8 @@ class TexturePatch(
             p = p.parent ?: break
         }
     }
+
+    override fun dispose() { parent?.dispose() ?: texture.dispose() }
 }
 
 fun Vector2.transform(patch:TexturePatch):Vector2 {
