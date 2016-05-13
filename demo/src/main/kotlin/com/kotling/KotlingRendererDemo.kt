@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.kotling.rendering.*
 
-class KotlingRendererDemo: ApplicationAdapter() {
+class KotlingRendererDemo : ApplicationAdapter() {
     val coloredRenderer     = ColoredRenderer()
     val texturedRenderer    = object : TexturedRenderer() {
         @VertexFormat("position:float2", "color:float4", "texCoords:float2")

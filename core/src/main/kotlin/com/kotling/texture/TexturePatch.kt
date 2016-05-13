@@ -6,11 +6,12 @@ import com.badlogic.gdx.utils.Disposable
 import com.kotling.util.Pool
 import com.kotling.util.poolable.use
 
-class TexturePatch(
+data class TexturePatch(
     val texture:Texture,
     val region:Rectangle,
     val frame:Rectangle = Rectangle().setPosition(0f, 0f).setSize(region.width, region.height),
-    val polygon:Polygon? = null,
+    val vertices:FloatArray = floatArrayOf(0f, 0f, region.width, 0f, 0f, region.height, region.width, region.height),
+    val indices:ShortArray = shortArrayOf(0, 1, 2, 1, 3, 2),
     val transform:Transform = TexturePatch.Transform.NONE,
     val scale:Float = 1f) : Disposable {
 
@@ -49,8 +50,8 @@ class TexturePatch(
         maxUV.mul(uvMatrix)
     }
 
-    constructor(patch:TexturePatch, region:Rectangle, frame:Rectangle = Rectangle().setPosition(0f, 0f).setSize(region.width, region.height), polygon:Polygon? = null, transform:Transform = Transform.NONE, scaleMultiplier:Float = 1f)
-    : this(patch.texture, region, frame, polygon, transform, patch.scale * scaleMultiplier) {
+    constructor(patch:TexturePatch, region:Rectangle, frame:Rectangle = Rectangle().setPosition(0f, 0f).setSize(region.width, region.height), vertices:FloatArray = floatArrayOf(0f, 0f, region.width, 0f, 0f, region.height, region.width, region.height), indices:ShortArray = shortArrayOf(0, 1, 2, 1, 3, 2), transform:Transform = Transform.NONE, scaleMultiplier:Float = 1f)
+    : this(patch.texture, region, frame, vertices, indices, transform, patch.scale * scaleMultiplier) {
         parent = patch
 
         uvMatrix

@@ -1,18 +1,21 @@
 package com.kotling.texture
 
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.math.Polygon
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Disposable
 import com.kotling.util.Pool
 import com.kotling.util.poolable.PoolableStringList
 import com.kotling.util.poolable.use
 
-class TexturePatchAtlas(val texture:Texture) : Disposable {
-    constructor(patch:TexturePatch) : this(patch.texture) { this.patch =  patch }
+class TexturePatchAtlas(val texture:Texture, val scale:Float = 1f) : Disposable {
+    constructor(patch:TexturePatch) : this(patch.texture, patch.scale) { this.patch =  patch }
 
     var patch:TexturePatch? = null
         private set
 
-    val patches:Map<String, TexturePatch> = mutableMapOf()
+    val mutablePatches:MutableMap<String, TexturePatch> = mutableMapOf()
+    val patches:Map<String, TexturePatch> = mutablePatches
     val names:Set<String>
         get() = patches.keys
 
@@ -68,4 +71,32 @@ class TexturePatchAtlas(val texture:Texture) : Disposable {
     }
 
     override fun dispose() { patch?.dispose() ?: texture.dispose() }
+
+    internal fun addPatch(name:String, region:Rectangle, frame:Rectangle? = null, vertices:FloatArray? = null, indices:ShortArray? = null, transform:TexturePatch.Transform = TexturePatch.Transform.NONE, scaleMultiplier:Float = 1f):TexturePatch {
+        val newPatch = when(patch) {
+            null -> when(frame) {
+                null -> when(vertices) {
+                    null -> TexturePatch(texture, region, transform = transform, scale = scale * scaleMultiplier)
+                    else -> TexturePatch(texture, region, vertices = vertices, indices = indices ?: throw IllegalArgumentException("provide both vertices and indices or none"), transform = transform, scale = scale * scaleMultiplier)
+                }
+                else -> when(vertices) {
+                    null -> TexturePatch(texture, region, frame = frame, transform = transform, scale = scale * scaleMultiplier)
+                    else -> TexturePatch(texture, region, frame = frame, vertices = vertices, indices = indices ?: throw IllegalArgumentException("provide both vertices and indices or none"), transform = transform, scale = scale * scaleMultiplier)
+                }
+            }
+            else -> when(frame) {
+                null -> when(vertices) {
+                    null -> TexturePatch(patch!!, region, transform = transform, scaleMultiplier = scaleMultiplier)
+                    else -> TexturePatch(patch!!, region, vertices = vertices, indices = indices ?: throw IllegalArgumentException("provide both vertices and indices or none"), transform = transform, scaleMultiplier = scaleMultiplier)
+                }
+                else -> when(vertices) {
+                    null -> TexturePatch(patch!!, region, frame = frame, transform = transform, scaleMultiplier = scaleMultiplier)
+                    else -> TexturePatch(patch!!, region, frame = frame, vertices = vertices, indices = indices ?: throw IllegalArgumentException("provide both vertices and indices or none"), transform = transform, scaleMultiplier = scaleMultiplier)
+                }
+            }
+        }
+
+        mutablePatches[name] = newPatch
+        return newPatch
+    }
 }

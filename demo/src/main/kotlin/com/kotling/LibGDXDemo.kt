@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
-class LibGDXDemo: ApplicationAdapter() {
+class LibGDXDemo : ApplicationAdapter() {
     internal lateinit var batch:SpriteBatch
     internal lateinit var img:Texture
 
