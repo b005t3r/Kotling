@@ -1,7 +1,7 @@
 package com.kotling.style
 
 import com.badlogic.gdx.graphics.VertexAttributes
-import com.kotling.display.MeshDisplay
+import com.kotling.display.mesh.MeshDisplay
 import com.kotling.rendering.RenderState
 import com.kotling.rendering.Renderer
 import com.kotling.style.factory.DefaultStyleFactory
@@ -34,7 +34,7 @@ abstract class Style {
         internal set(value) { mesh?.requiresRedraw = value }
 
     val vertices = mesh?.vertices ?: throw IllegalStateException("mesh not set")
-    val indices = mesh?.vertices ?: throw IllegalStateException("mesh not set")
+    val indices = mesh?.indices ?: throw IllegalStateException("mesh not set")
 
     open fun set(style:Style) {
         if(! javaClass.isInstance(style))

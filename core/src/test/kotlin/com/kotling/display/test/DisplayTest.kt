@@ -2,7 +2,7 @@ package com.kotling.display.test
 
 import com.badlogic.gdx.math.MathUtils
 import com.kotling.display.Display
-import com.kotling.display.mesh.name
+import com.kotling.display.attribute.name
 import junit.framework.TestCase
 
 class DisplayTest : TestCase() {

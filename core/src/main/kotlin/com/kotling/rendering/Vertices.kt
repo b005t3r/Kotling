@@ -2,10 +2,7 @@ package com.kotling.rendering
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.VertexAttributes
-import com.badlogic.gdx.math.Matrix3
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.math.*
 import com.kotling.util.Pool
 import com.kotling.util.poolable.use
 import com.kotling.util.set
@@ -13,19 +10,24 @@ import com.kotling.util.set
 class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACITY) : Cloneable {
     companion object {
         const val MIN_CAPACITY:Int = 4
+        const val MAX_CAPACITY:Int = Short.MAX_VALUE.toInt()
     }
 
     init {
         var offset = 0
 
-        for(attr in attributes) {
+        for((attrID, attr) in attributes.withIndex()) {
             if(positionOffset < 0) {
-                if(attr.usage == VertexAttributes.Usage.Position)
+                if(attr.usage == VertexAttributes.Usage.Position) {
                     positionOffset = offset
-                else if(attr.usage == VertexAttributes.Usage.ColorPacked)
+                    positionAttrID = attrID
+                }
+                else if(attr.usage == VertexAttributes.Usage.ColorPacked) {
                     ++offset
-                else
+                }
+                else {
                     offset += attr.numComponents
+                }
             }
 
             if(attr.usage == VertexAttributes.Usage.ColorPacked)
@@ -42,6 +44,9 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
         private set
 
     var positionOffset = -1
+        private set
+
+    var positionAttrID = -1
         private set
 
     val componentOffsets:Map<String, Int> by lazy(LazyThreadSafetyMode.NONE, fun():Map<String, Int> {
@@ -77,6 +82,9 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
         if(rawData.size > MIN_CAPACITY * componentCount)
             rawData = FloatArray(Math.max(size * componentCount, MIN_CAPACITY * componentCount), { i -> rawData[i] })
     }
+
+    /** Retain <code>count</code> first vertices (just changes the size internally). */
+    fun retainFirst(count:Int) = if(count < size) size = count else throw IllegalArgumentException("count ($count) is greater than size ($size)")
 
     fun ensureCapacity(newCapacity:Int):Vertices {
         if(rawData.size >= newCapacity * componentCount)
@@ -411,7 +419,7 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
     /**
      * @see set
      */
-    fun get(vertexID:Int, offset:Int, result:Color? = null):Color {
+    fun get(vertexID:Int, offset:Int, packed:Boolean = true, result:Color? = null):Color {
         if(vertexID !in 0..size - 1)
             throw IndexOutOfBoundsException("indexID $vertexID is outside 0..${size - 1}")
 
@@ -419,7 +427,43 @@ class Vertices(val attributes:VertexAttributes, initialCapacity:Int = MIN_CAPACI
 
         val totalOffset = vertexID * componentCount + offset
 
-        return out.set(rawData[totalOffset])
+        return when(packed) {
+            true -> out.set(rawData[totalOffset])
+            false -> out.set(rawData[totalOffset], rawData[totalOffset + 1], rawData[totalOffset + 2], rawData[totalOffset + 3])
+        }
+    }
+
+    fun contains(point:Vector2, firstVertexID:Int, secondVertexID:Int, thirdVertexID:Int):Boolean {
+        Pool.Vector2.use { firstVertex ->
+        Pool.Vector2.use { secondVertex ->
+        Pool.Vector2.use { thirdVertex ->
+            get(firstVertexID, positionOffset, firstVertex)
+            get(secondVertexID, positionOffset, secondVertex)
+            get(thirdVertexID, positionOffset, thirdVertex)
+
+            return Intersector.isPointInTriangle(point, firstVertex, secondVertex,thirdVertex)
+        }}}
+    }
+
+    fun contains(point:Vector2, indices:Indices):Boolean {
+        Pool.Vector2.use { firstVertex ->
+        Pool.Vector2.use { secondVertex ->
+        Pool.Vector2.use { thirdVertex ->
+            for(i in 0..indices.size - 1 step 3) {
+                val firstVertexID   = indices[i].toInt()
+                val secondVertexID  = indices[i + 1].toInt()
+                val thirdVertexID   = indices[i + 2].toInt()
+
+                get(firstVertexID, positionOffset, firstVertex)
+                get(secondVertexID, positionOffset, secondVertex)
+                get(thirdVertexID, positionOffset, thirdVertex)
+
+                if(Intersector.isPointInTriangle(point, firstVertex, secondVertex,thirdVertex))
+                    return true
+            }
+
+            return false
+        }}}
     }
 
     override fun toString():String = "attributes: $attributes, componentCount: $componentCount, size: $size, rawData: ${rawData.joinToString(", ", "[", "]", 128)}".replace(")\n]", ")]").replace("\n", ", ")

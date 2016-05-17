@@ -2,6 +2,7 @@ package com.kotling.util
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Matrix3
+import com.badlogic.gdx.math.Matrix4
 
 var Matrix3.a:Float get() { return `val`[Matrix3.M00]} set(value) { `val`[Matrix3.M00] = value }
 var Matrix3.b:Float get() { return `val`[Matrix3.M10]} set(value) { `val`[Matrix3.M10] = value }
@@ -45,4 +46,15 @@ fun Matrix3.skew(skewX:Float, skewY:Float):Matrix3 {
     )
 
     return this
+}
+
+fun Matrix3.from3D(m:Matrix4):Matrix3 {
+    `val`[Matrix3.M00] = m.`val`[Matrix4.M00]
+    `val`[Matrix3.M01] = m.`val`[Matrix4.M01]
+    `val`[Matrix3.M10] = m.`val`[Matrix4.M10]
+    `val`[Matrix3.M11] = m.`val`[Matrix4.M11]
+    `val`[Matrix3.M02] = m.`val`[Matrix4.M03]
+    `val`[Matrix3.M12] = m.`val`[Matrix4.M13]
+
+    return setLastRow()
 }

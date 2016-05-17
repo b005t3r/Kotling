@@ -2,7 +2,7 @@ package com.kotling.display.test
 
 import com.kotling.display.Container
 import com.kotling.display.Display
-import com.kotling.display.mesh.name
+import com.kotling.display.attribute.name
 import junit.framework.TestCase
 
 class ContainerChildrenTest: TestCase() {

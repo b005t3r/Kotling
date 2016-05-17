@@ -2,8 +2,8 @@ package com.kotling.style
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes
-import com.kotling.display.MeshDisplay
-import com.kotling.display.mesh.textures
+import com.kotling.display.mesh.MeshDisplay
+import com.kotling.display.attribute.textures
 import com.kotling.rendering.*
 
 class TexturedStyle : Style() {

@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.Pools
-import com.kotling.display.mesh.DisplayAttribute
+import com.kotling.display.attribute.DisplayAttribute
 import com.kotling.util.poolable.PoolableMatrix3
 import com.kotling.util.poolable.PoolableRectangle
 import com.kotling.util.poolable.PoolableVector2
@@ -271,6 +271,7 @@ abstract class Display : Disposable {
 
     var attributes = mutableListOf<DisplayAttribute>()
 
+    internal var tokenFrameID = 0
 
     override fun dispose() {
     }
@@ -355,4 +356,12 @@ abstract class Display : Disposable {
 
     abstract fun getBounds(targetSpace:Display?, result:Rectangle? = null):Rectangle
     abstract fun render(painter:Painter)
+
+    internal fun excludeFromCache() {
+        var obj = this
+        while(obj.tokenFrameID != 0xFFFFFFFF.toInt()) {
+            obj.tokenFrameID = 0xFFFFFFFF.toInt()
+            obj = obj.parent ?: break
+        }
+    }
 }

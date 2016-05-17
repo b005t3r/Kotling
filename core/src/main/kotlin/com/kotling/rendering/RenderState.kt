@@ -5,42 +5,57 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Pool
 import com.kotling.display.BlendMode
 import kotlin.reflect.primaryConstructor
 
 class RenderState : Pool.Poolable {
-    var color                       = Color.WHITE.cpy()
+    var color = Color.WHITE.cpy()
         set(value) { field.set(value) }
 
-    var blendMode                   = BlendMode.NORMAL
+    var blendMode = BlendMode.NORMAL
         set(value) {
-            //TODO: onDrawRequiredEvent
+            if(value == field)
+                return
+
+            onDrawRequired!!()
             field = value
         }
-    var renderTarget:FrameBuffer?   = null
+    var renderTarget:FrameBuffer? = null
         set(value) {
-            //TODO: onDrawRequiredEvent
+            if(value == field)
+                return
+
+            onDrawRequired!!()
             field = value
         }
-    var clipRect:Rectangle?         = null
+    var clipRect:Rectangle? = null
         set(value) {
-            //TODO: onDrawRequiredEvent
+            if(value == field)
+                return
+
+            onDrawRequired!!()
+
             if(value != null)
                 field = field?.set(value) ?: Rectangle(value)
             else
                 field = null
         }
-    // internal var onDrawRequiredEvent
 
-    var camera:Camera               = OrthographicCamera()
+    private var onDrawRequired:(()->Unit)? = null
+
+    var modelViewMatrix = Matrix3()
+    var camera:Camera = OrthographicCamera()
 
     override fun reset() {
         color               = Color.WHITE
         blendMode           = BlendMode.NORMAL
         renderTarget        = null;
         clipRect            = null;
+
+        modelViewMatrix.idt()
 
         camera.position.set(0f, 0f, 0f)
         camera.direction.set(0f, 0f, -1f)
@@ -65,12 +80,21 @@ class RenderState : Pool.Poolable {
     fun set(renderState:RenderState):RenderState {
         reset()
 
-        // TODO: onDrawRequiredEvent
+        if(onDrawRequired != null) {
+            val clipRectChanges = clipRect != null && renderState.clipRect == null
+                || clipRect == null && renderState.clipRect != null
+                || clipRect != null && renderState.clipRect != null && clipRect != renderState.clipRect
+
+            if(blendMode != renderState.blendMode || renderTarget != renderState.renderTarget || clipRectChanges)
+                onDrawRequired!!()
+        }
 
         color               = renderState.color
         blendMode           = renderState.blendMode
         renderTarget        = renderState.renderTarget;
         clipRect            = if(renderState.clipRect == null) null else Rectangle(renderState.clipRect)
+
+        modelViewMatrix.set(renderState.modelViewMatrix)
 
         if(camera.javaClass.kotlin != renderState.camera.javaClass.kotlin)
             camera = renderState.camera.javaClass.kotlin.primaryConstructor!!.call()

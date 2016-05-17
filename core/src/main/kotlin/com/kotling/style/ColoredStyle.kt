@@ -1,7 +1,7 @@
 package com.kotling.style
 
 import com.badlogic.gdx.graphics.VertexAttributes
-import com.kotling.display.MeshDisplay
+import com.kotling.display.mesh.MeshDisplay
 import com.kotling.rendering.*
 
 class ColoredStyle : Style() {

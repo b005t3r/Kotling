@@ -71,6 +71,9 @@ class Indices(initialCapacity:Int = MIN_CAPACITY) : Iterable<Short>, Sequence<Sh
             rawData = ShortArray(Math.max(size, MIN_CAPACITY), { i -> rawData[i] })
     }
 
+    /** Retain <code>count</code> first indices (just changes the size internally). */
+    fun retainFirst(count:Int) = if(count < size) size = count else throw IllegalArgumentException("count ($count) is greater than size ($size)")
+
     fun ensureCapacity(newCapacity:Int):Indices {
         if(rawData.size >= newCapacity)
             return this
