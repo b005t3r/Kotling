@@ -1,4 +1,4 @@
-package com.kotling.display.mesh
+package com.kotling.display.attribute
 
 import com.badlogic.gdx.graphics.Texture
 import com.kotling.display.Display
@@ -22,7 +22,7 @@ var Display.textures:List<Texture>
         if(value == emptyList<Texture>())
             return
 
-        attributes.add(object : TexturesDisplayAttribute {
+        attributes.add(object :TexturesDisplayAttribute {
             override val textures:List<Texture>
                 get() = value
         })

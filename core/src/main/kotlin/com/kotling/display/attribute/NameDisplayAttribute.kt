@@ -1,8 +1,8 @@
-package com.kotling.display.mesh
+package com.kotling.display.attribute
 
 import com.kotling.display.Display
 
-interface NameDisplayAttribute : DisplayAttribute {
+interface NameDisplayAttribute :DisplayAttribute {
     val name:String
 }
 
@@ -21,7 +21,7 @@ var Display.name:String
         if(value == "")
             return
 
-        attributes.add(object : NameDisplayAttribute {
+        attributes.add(object :NameDisplayAttribute {
             override val name:String
                 get() = value
         })
